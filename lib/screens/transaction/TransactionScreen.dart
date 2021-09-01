@@ -1,14 +1,17 @@
+import 'package:bluefin/screens/transaction/cashTransaction.dart';
+import 'package:bluefin/screens/transaction/addCashTrans.dart';
+//import 'package:bluefin/screens/transaction/tradeTransaction.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
-class HistoryScreen extends StatefulWidget {
-  const HistoryScreen({Key? key}) : super(key: key);
+class TransactionScreen extends StatefulWidget {
+  const TransactionScreen({Key? key}) : super(key: key);
 
   @override
-  _HistoryScreenState createState() => _HistoryScreenState();
+  _TransactionScreenState createState() => _TransactionScreenState();
 }
 
-class _HistoryScreenState extends State<HistoryScreen> {
+class _TransactionScreenState extends State<TransactionScreen> {
   int index = 0;
 
   @override
@@ -21,11 +24,18 @@ class _HistoryScreenState extends State<HistoryScreen> {
             backgroundColor: Colors.white,
             title: Center(
                 child: Text(
-              "History",
+              "Transaction",
               style: TextStyle(color: Colors.black),
             )),
             leading: IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    if (index == 0) {
+                      return AddCashTrans();
+                    } else
+                      return AddCashTrans();
+                  }));
+                },
                 color: Colors.black45,
                 icon: Icon(
                   MaterialCommunityIcons.plus,
@@ -69,6 +79,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 )
               ],
             ),
+          ),
+          body: TabBarView(
+            children: <Widget>[CashTransaction(), Text("hello")],
           ),
         ));
   }

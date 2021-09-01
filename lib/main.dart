@@ -1,4 +1,5 @@
-import 'package:bluefin/screens/history/historyScreen.dart';
+import 'package:bluefin/providers/cashTransactionProvider.dart';
+import 'package:bluefin/screens/transaction/TransactionScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
@@ -11,12 +12,19 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "Bluefin",
-      home: MyStatefulWidget(),
-      theme: ThemeData(
-        highlightColor: Colors.transparent,
-        splashColor: Colors.transparent,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) {
+          return CashTransactionProvider();
+        })
+      ],
+      child: MaterialApp(
+        title: "Bluefin",
+        home: MyStatefulWidget(),
+        theme: ThemeData(
+          highlightColor: Colors.transparent,
+          splashColor: Colors.transparent,
+        ),
       ),
     );
   }
@@ -41,7 +49,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
       case 1:
         return Text("hello");
       case 2:
-        return HistoryScreen();
+        return TransactionScreen();
       case 3:
         return Text("hello");
       case 4:

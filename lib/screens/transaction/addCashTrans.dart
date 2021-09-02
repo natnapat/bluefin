@@ -73,9 +73,10 @@ class _AddCashTransState extends State<AddCashTrans> {
                   cursorColor: Colors.black,
                   validator: (str) {
                     if (str == null || str.isEmpty) return "required";
-                    if (!str.startsWith('+') && !str.startsWith('-'))
-                      return "only +,- sign";
-                    return null;
+                    if (str.startsWith('+') ||
+                        str.startsWith('-') ||
+                        str.startsWith(new RegExp(r'[0-9]'))) return null;
+                    return "only +,- sign";
                   },
                   decoration: InputDecoration(
                       labelText: 'Amount',

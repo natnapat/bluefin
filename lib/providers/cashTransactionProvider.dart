@@ -11,7 +11,14 @@ class CashTransactionProvider with ChangeNotifier {
 
   void initData() async {
     var db = TransactionDB();
-    cashTrans = await db.getCashTransaction();
+    cashTrans = await db.getCashTransaction(0, "", "", "");
+    notifyListeners();
+  }
+
+  void cashFilter(
+      int type, String? category, String? startDate, String? endDate) async {
+    TransactionDB db = TransactionDB();
+    cashTrans = await db.getCashTransaction(type, category, startDate, endDate);
     notifyListeners();
   }
 
@@ -19,7 +26,7 @@ class CashTransactionProvider with ChangeNotifier {
   void addCashTransaction(CashTransactionModel cashTransactionModel) async {
     var db = TransactionDB();
     await db.insertCashTransaction(cashTransactionModel);
-    cashTrans = await db.getCashTransaction();
+    cashTrans = await db.getCashTransaction(0, "", "", "");
     notifyListeners();
   }
 
@@ -27,7 +34,7 @@ class CashTransactionProvider with ChangeNotifier {
   void deleteCashTransaction(int? id) async {
     var db = TransactionDB();
     await db.deleteTransaction(id, 0);
-    cashTrans = await db.getCashTransaction();
+    cashTrans = await db.getCashTransaction(0, "", "", "");
     notifyListeners();
   }
 }

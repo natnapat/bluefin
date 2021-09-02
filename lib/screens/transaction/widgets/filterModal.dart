@@ -1,6 +1,8 @@
 import 'package:bluefin/screens/transaction/widgets/categorySearch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:bluefin/providers/cashTransactionProvider.dart';
+import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 class FilterModal extends StatefulWidget {
@@ -21,6 +23,7 @@ class _FilterModalState extends State<FilterModal> {
   Color allButtonColor = Colors.amber;
   Color incomeButtonColor = Colors.transparent;
   Color expenseButtonColor = Colors.transparent;
+  DateTime date = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +69,7 @@ class _FilterModalState extends State<FilterModal> {
                             allButtonColor = Colors.amber;
                             incomeButtonColor = Colors.transparent;
                             expenseButtonColor = Colors.transparent;
-                            print(filterType);
+                            print("select all");
                           });
                         },
                         child: Text("All",
@@ -88,7 +91,7 @@ class _FilterModalState extends State<FilterModal> {
                             allButtonColor = Colors.transparent;
                             incomeButtonColor = Colors.amber;
                             expenseButtonColor = Colors.transparent;
-                            print(filterType);
+                            print("select income");
                           });
                         },
                         child: Text("Income",
@@ -110,7 +113,7 @@ class _FilterModalState extends State<FilterModal> {
                             allButtonColor = Colors.transparent;
                             incomeButtonColor = Colors.transparent;
                             expenseButtonColor = Colors.amber;
-                            print(filterType);
+                            print("select expense");
                           });
                         },
                         child: Text(
@@ -179,10 +182,11 @@ class _FilterModalState extends State<FilterModal> {
                         });
                       },
                       validator: (str) {
-                        if (str!.isEmpty ||
-                            DateTime.parse(str)
-                                .isBefore(DateTime.parse(startDate.text)))
-                          return "invalid";
+                        if (startDate.text.isNotEmpty) {
+                          if (DateTime.parse(str!)
+                              .isBefore(DateTime.parse(startDate.text)))
+                            return "invalid";
+                        }
                         return null;
                       },
                       decoration: InputDecoration(
@@ -199,7 +203,7 @@ class _FilterModalState extends State<FilterModal> {
               child: CupertinoDatePicker(
                   initialDateTime: DateTime.now(),
                   mode: CupertinoDatePickerMode.date,
-                  maximumDate: DateTime.now(),
+                  maximumDate: DateTime(date.year, date.month, date.day + 1),
                   onDateTimeChanged: (val) {
                     setState(() {
                       if (dateRangeType == 0)
@@ -208,6 +212,36 @@ class _FilterModalState extends State<FilterModal> {
                         endDate.text = val.toString();
                     });
                   }),
+            ),
+            Container(
+              child: Center(
+                child: Container(
+                  margin: const EdgeInsets.only(top: 20),
+                  child: TextButton(
+                      style: TextButton.styleFrom(
+                          padding: EdgeInsets.all(15),
+                          primary: Colors.white,
+                          backgroundColor: Colors.amberAccent),
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          print("filtered");
+                          var provider = Provider.of<CashTransactionProvider>(
+                              context,
+                              listen: false);
+                          provider.cashFilter(
+                              filterType,
+                              categoryFilterController.text,
+                              startDate.text,
+                              endDate.text);
+                          Navigator.pop(context);
+                        }
+                      },
+                      child: Text(
+                        'Filter',
+                        style: TextStyle(color: Colors.black),
+                      )),
+                ),
+              ),
             )
           ],
         ),

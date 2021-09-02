@@ -10,9 +10,61 @@ class TransactionDB {
     return openDatabase(join(path, "bluefin.db"));
   }
 
-  Future<List<CashTransactionModel>> getCashTransaction() async {
+  Future<List<CashTransactionModel>> getCashTransaction(
+      int type, String? category, String? startDate, String? endDate) async {
     Database db = await initDB();
-    List<Map<String, Object?>> datas = await db.query("cashTransaction");
+    List<Map<String, Object?>> datas = [];
+
+    print(type);
+    print(category);
+    print(startDate);
+
+    if (type == 0) {
+      if (category == "") {
+        if (startDate == "") {
+          print("hello null");
+          datas = await db.query("cashTransaction");
+        } else {
+          datas = await db.rawQuery(
+              'SELECT * FROM cashTransaction WHERE timestamp BETWEEN ? and ?',
+              [startDate, endDate]);
+        }
+      } else {
+        datas = await db.rawQuery(
+            'SELECT * FROM cashTransaction WHERE category = ?', [category]);
+      }
+    } else if (type == 1) {
+      if (category == "") {
+        if (startDate == "") {
+          datas = await db
+              .rawQuery('SELECT * FROM cashTransaction WHERE amount > ?', [0]);
+        } else {
+          datas = await db.rawQuery(
+              'SELECT * FROM cashTransaction WHERE amount > 0 AND timestamp BETWEEN ? and ?',
+              [startDate, endDate]);
+        }
+      } else {
+        datas = await db.rawQuery(
+            'SELECT * FROM cashTransaction WHERE amount > 0 AND category = ?',
+            [category]);
+      }
+    } else if (type == 2) {
+      if (category == "") {
+        if (startDate == "") {
+          datas = await db
+              .rawQuery('SELECT * FROM cashTransaction WHERE amount < ?', [0]);
+        } else {
+          datas = await db.rawQuery(
+              'SELECT * FROM cashTransaction WHERE amount < 0 AND timestamp BETWEEN ? and ?',
+              [startDate, endDate]);
+        }
+      } else {
+        datas = await db.rawQuery(
+            'SELECT * FROM cashTransaction WHERE amount < 0 AND category = ?',
+            [category]);
+      }
+    }
+    //print(datas);
     return datas.map((e) => CashTransactionModel.fromMap(e)).toList();
   }
 

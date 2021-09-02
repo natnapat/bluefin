@@ -1,5 +1,7 @@
 import 'package:bluefin/screens/transaction/widgets/categorySearch.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:intl/intl.dart';
 
 class FilterModal extends StatefulWidget {
   const FilterModal({Key? key}) : super(key: key);
@@ -10,7 +12,15 @@ class FilterModal extends StatefulWidget {
 
 class _FilterModalState extends State<FilterModal> {
   final _formKey = GlobalKey<FormState>();
-  var categoryFilterController = TextEditingController();
+  TextEditingController categoryFilterController = TextEditingController();
+  TextEditingController startDate = TextEditingController();
+  TextEditingController endDate = TextEditingController();
+
+  int dateRangeType = 0;
+  int filterType = 0;
+  Color allButtonColor = Colors.amber;
+  Color incomeButtonColor = Colors.transparent;
+  Color expenseButtonColor = Colors.transparent;
 
   @override
   Widget build(BuildContext context) {
@@ -44,21 +54,72 @@ class _FilterModalState extends State<FilterModal> {
                 children: [
                   Expanded(
                       child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child:
-                        OutlinedButton(onPressed: () {}, child: Text("hello")),
+                    padding: EdgeInsets.symmetric(horizontal: 18),
+                    child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                            backgroundColor: allButtonColor,
+                            splashFactory: NoSplash.splashFactory),
+                        autofocus: false,
+                        onPressed: () {
+                          setState(() {
+                            filterType = 0;
+                            allButtonColor = Colors.amber;
+                            incomeButtonColor = Colors.transparent;
+                            expenseButtonColor = Colors.transparent;
+                            print(filterType);
+                          });
+                        },
+                        child: Text("All",
+                            style: TextStyle(
+                                color: filterType == 0
+                                    ? Colors.white
+                                    : Colors.black))),
                   )),
                   Expanded(
                       child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child:
-                        OutlinedButton(onPressed: () {}, child: Text("hello")),
+                    padding: EdgeInsets.symmetric(horizontal: 18),
+                    child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                            backgroundColor: incomeButtonColor,
+                            splashFactory: NoSplash.splashFactory),
+                        onPressed: () {
+                          setState(() {
+                            filterType = 1;
+                            allButtonColor = Colors.transparent;
+                            incomeButtonColor = Colors.amber;
+                            expenseButtonColor = Colors.transparent;
+                            print(filterType);
+                          });
+                        },
+                        child: Text("Income",
+                            style: TextStyle(
+                                color: filterType == 1
+                                    ? Colors.white
+                                    : Colors.black))),
                   )),
                   Expanded(
                       child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20),
-                    child:
-                        OutlinedButton(onPressed: () {}, child: Text("hello")),
+                    padding: EdgeInsets.symmetric(horizontal: 18),
+                    child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                            backgroundColor: expenseButtonColor,
+                            splashFactory: NoSplash.splashFactory),
+                        onPressed: () {
+                          setState(() {
+                            filterType = 2;
+                            allButtonColor = Colors.transparent;
+                            incomeButtonColor = Colors.transparent;
+                            expenseButtonColor = Colors.amber;
+                            print(filterType);
+                          });
+                        },
+                        child: Text(
+                          "Expense",
+                          style: TextStyle(
+                              color: filterType == 2
+                                  ? Colors.white
+                                  : Colors.black),
+                        )),
                   )),
                 ],
               ),
@@ -71,8 +132,10 @@ class _FilterModalState extends State<FilterModal> {
                       context: context, delegate: CategorySearch());
                   categoryFilterController.text = result!;
                 },
-                keyboardType: TextInputType.text,
-                cursorColor: Colors.black,
+                showCursor: false,
+                readOnly: true,
+                //keyboardType: TextInputType.text,
+                //cursorColor: Colors.black,
                 decoration: InputDecoration(
                   labelText: "Category",
                   labelStyle: TextStyle(color: Colors.black),
@@ -80,6 +143,71 @@ class _FilterModalState extends State<FilterModal> {
                       borderSide: BorderSide(color: Colors.amber)),
                 ),
               ),
+            ),
+            Container(
+              margin: EdgeInsets.only(top: 10),
+              child: Row(
+                children: [
+                  Expanded(
+                      child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 30),
+                    child: TextFormField(
+                      controller: startDate,
+                      showCursor: false,
+                      readOnly: true,
+                      onTap: () async {
+                        setState(() {
+                          dateRangeType = 0;
+                        });
+                      },
+                      decoration: InputDecoration(
+                        labelText: "start date",
+                        labelStyle: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  )),
+                  Expanded(
+                      child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 30),
+                    child: TextFormField(
+                      controller: endDate,
+                      showCursor: false,
+                      readOnly: true,
+                      onTap: () async {
+                        setState(() {
+                          dateRangeType = 1;
+                        });
+                      },
+                      validator: (str) {
+                        if (str!.isEmpty ||
+                            DateTime.parse(str)
+                                .isBefore(DateTime.parse(startDate.text)))
+                          return "invalid";
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        labelText: "end date",
+                        labelStyle: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  ))
+                ],
+              ),
+            ),
+            Container(
+              height: 150,
+              child: CupertinoDatePicker(
+                  initialDateTime: DateTime.now(),
+                  mode: CupertinoDatePickerMode.date,
+                  maximumDate: DateTime.now(),
+                  onDateTimeChanged: (val) {
+                    setState(() {
+                      if (dateRangeType == 0)
+                        startDate.text = val.toString();
+                      else
+                        endDate.text = val.toString();
+                    });
+                  }),
             )
           ],
         ),

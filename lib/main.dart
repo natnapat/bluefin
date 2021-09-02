@@ -19,13 +19,12 @@ class MyApp extends StatelessWidget {
         })
       ],
       child: MaterialApp(
-        title: "Bluefin",
-        home: MyStatefulWidget(),
-        theme: ThemeData(
-          highlightColor: Colors.transparent,
-          splashColor: Colors.transparent,
-        ),
-      ),
+          title: "Bluefin",
+          home: MyStatefulWidget(),
+          theme: ThemeData(
+            highlightColor: Colors.transparent,
+            splashColor: Colors.transparent,
+          )),
     );
   }
 }

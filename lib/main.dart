@@ -80,7 +80,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
             ),
             BottomNavigationBarItem(
               icon: Icon(MaterialCommunityIcons.update),
-              label: 'History',
+              label: 'Transaction',
             ),
             BottomNavigationBarItem(
               icon: Icon(MaterialCommunityIcons.wallet_outline),

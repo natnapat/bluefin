@@ -1,5 +1,6 @@
 import 'package:bluefin/screens/transaction/cashTransaction.dart';
 import 'package:bluefin/screens/transaction/addCashTrans.dart';
+import 'package:bluefin/screens/transaction/widgets/filterModal.dart';
 //import 'package:bluefin/screens/transaction/tradeTransaction.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
@@ -42,7 +43,16 @@ class _TransactionScreenState extends State<TransactionScreen> {
                 )),
             actions: [
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  showModalBottomSheet(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      context: context,
+                      builder: (context) {
+                        return FilterModal();
+                      });
+                },
                 //highlightColor: Colors.transparent,
                 //splashColor: Colors.transparent,
                 color: Colors.black45,
@@ -50,13 +60,13 @@ class _TransactionScreenState extends State<TransactionScreen> {
                   MaterialCommunityIcons.filter_outline,
                 ),
               ),
-              IconButton(
-                onPressed: () {},
-                color: Colors.black45,
-                icon: Icon(
-                  MaterialCommunityIcons.calendar_blank_outline,
-                ),
-              )
+              // IconButton(
+              //   onPressed: () {},
+              //   color: Colors.black45,
+              //   icon: Icon(
+              //     MaterialCommunityIcons.calendar_blank_outline,
+              //   ),
+              // )
             ],
             bottom: TabBar(
               unselectedLabelColor: Colors.black45,

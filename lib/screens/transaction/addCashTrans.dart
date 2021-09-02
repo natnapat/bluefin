@@ -51,6 +51,7 @@ class _AddCashTransState extends State<AddCashTrans> {
                     cursorColor: Colors.black,
                     validator: (str) {
                       if (str == null || str.isEmpty) return "required";
+                      if (str.length > 25) return "too long";
                       return null;
                     },
                     decoration: InputDecoration(
@@ -72,6 +73,8 @@ class _AddCashTransState extends State<AddCashTrans> {
                   cursorColor: Colors.black,
                   validator: (str) {
                     if (str == null || str.isEmpty) return "required";
+                    if (!str.startsWith('+') && !str.startsWith('-'))
+                      return "only +,- sign";
                     return null;
                   },
                   decoration: InputDecoration(
@@ -102,9 +105,15 @@ class _AddCashTransState extends State<AddCashTrans> {
                         focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.amber))),
                     firstDate: DateTime(2000),
-                    lastDate: DateTime(2100),
+                    lastDate: DateTime.now(),
                     initialEntryMode: DatePickerEntryMode.input,
                     dateLabelText: 'Date',
+                    validator: (str) {
+                      if (str!.isEmpty ||
+                          DateTime.parse(str).isAfter(DateTime.now()))
+                        return "invalid";
+                      return null;
+                    },
                     onChanged: (val) {
                       print(val);
                     },

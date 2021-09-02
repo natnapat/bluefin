@@ -6,7 +6,7 @@ import 'package:bluefin/models/tradeTransactionModel.dart';
 class TransactionDB {
   Future<Database> initDB() async {
     String path = await getDatabasesPath();
-    //print("database: $path");
+    print("database: $path");
     return openDatabase(join(path, "bluefin.db"));
   }
 

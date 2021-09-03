@@ -1,5 +1,7 @@
+import 'package:bluefin/screens/transaction/addTradeTrans.dart';
 import 'package:bluefin/screens/transaction/cashTransaction.dart';
 import 'package:bluefin/screens/transaction/addCashTrans.dart';
+import 'package:bluefin/screens/transaction/tradeTransaction.dart';
 import 'package:bluefin/screens/transaction/widgets/filterModal.dart';
 //import 'package:bluefin/screens/transaction/tradeTransaction.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +15,7 @@ class TransactionScreen extends StatefulWidget {
 }
 
 class _TransactionScreenState extends State<TransactionScreen> {
-  int index = 0;
+  int transIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -31,10 +33,10 @@ class _TransactionScreenState extends State<TransactionScreen> {
             leading: IconButton(
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    if (index == 0) {
+                    if (transIndex == 0) {
                       return AddCashTrans();
                     } else
-                      return AddCashTrans();
+                      return AddTradeTrans();
                   }));
                 },
                 color: Colors.black45,
@@ -78,7 +80,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                 return Colors.transparent;
               }),
               onTap: (index) {
-                index = index;
+                transIndex = index;
               },
               tabs: <Widget>[
                 Tab(
@@ -91,7 +93,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
             ),
           ),
           body: TabBarView(
-            children: <Widget>[CashTransaction(), Text("hello")],
+            children: <Widget>[CashTransaction(), TradeTransaction()],
           ),
         ));
   }

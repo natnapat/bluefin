@@ -1,3 +1,4 @@
+import 'package:bluefin/screens/transaction/widgets/categorySearch.dart';
 import 'package:flutter/material.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:bluefin/models/cashTransactionModel.dart';
@@ -40,10 +41,10 @@ class _AddCashTransState extends State<AddCashTrans> {
               Container(
                 margin: EdgeInsets.all(10),
                 child: Focus(
-                  onFocusChange: (value) {
-                    categoryController.text =
-                        autoCategory(titleController.text);
-                  },
+                  // onFocusChange: (value) {
+                  //   categoryController.text =
+                  //       autoCategory(titleController.text);
+                  // },
                   child: TextFormField(
                     controller: titleController,
                     autofocus: true,
@@ -126,11 +127,16 @@ class _AddCashTransState extends State<AddCashTrans> {
                 margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
                 child: TextFormField(
                   controller: categoryController,
-                  keyboardType: TextInputType.text,
-                  cursorColor: Colors.black,
+                  showCursor: false,
+                  readOnly: true,
                   validator: (str) {
                     if (str == null || str.isEmpty) return "required";
                     return null;
+                  },
+                  onTap: () async {
+                    final result = await showSearch(
+                        context: context, delegate: CategorySearch());
+                    categoryController.text = result!;
                   },
                   decoration: InputDecoration(
                       labelText: 'Category',

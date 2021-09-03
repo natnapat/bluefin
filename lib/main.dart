@@ -1,4 +1,5 @@
 import 'package:bluefin/providers/cashTransactionProvider.dart';
+import 'package:bluefin/providers/tradeTransactionProvider.dart';
 import 'package:bluefin/screens/transaction/TransactionScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +17,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) {
           return CashTransactionProvider();
+        }),
+        ChangeNotifierProvider(create: (context) {
+          return TradeTransactionProvider();
         })
       ],
       child: MaterialApp(

@@ -68,10 +68,23 @@ class TransactionDB {
     return datas.map((e) => CashTransactionModel.fromMap(e)).toList();
   }
 
+  Future<List<TradeTransactionModel>> getTradeTransaction(
+      int type, String? asset, String? startDate, String? endDate) async {
+    Database db = await initDB();
+    List<Map<String, Object?>> datas = await db.query("tradeTransaction");
+    return datas.map((e) => TradeTransactionModel.fromMap(e)).toList();
+  }
+
   Future<void> insertCashTransaction(
       CashTransactionModel cashTransaction) async {
     Database db = await initDB();
     await db.insert("cashTransaction", cashTransaction.toMap());
+  }
+
+  Future<void> insertTradeTransaction(
+      TradeTransactionModel tradeTransaction) async {
+    Database db = await initDB();
+    await db.insert("tradeTransaction", tradeTransaction.toMap());
   }
 
   Future<void> deleteTransaction(int? id, int transactionType) async {
@@ -80,7 +93,7 @@ class TransactionDB {
       await db.delete("cashTransaction", where: "id=?", whereArgs: [id]);
       print("delete cash transaction at index $id");
     } else if (transactionType == 1) {
-      await db.delete("tradeTransaction", where: "id=?", whereArgs: [id]);
+      await db.delete("tradeTransaction", where: "tradeID=?", whereArgs: [id]);
       print("delete trade transaction at index $id");
     }
   }

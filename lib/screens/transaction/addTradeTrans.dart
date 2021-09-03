@@ -1,6 +1,6 @@
+import 'package:bluefin/screens/transaction/widgets/categorySearch.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:bluefin/screens/transaction/widgets/assetSearch.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:bluefin/providers/tradeTransactionProvider.dart';
 import 'package:bluefin/models/tradeTransactionModel.dart';
@@ -44,12 +44,13 @@ class _AddTradeTransState extends State<AddTradeTrans> {
                     controller: tradeTitleController,
                     onTap: () async {
                       final result = await showSearch(
-                          context: context, delegate: AssetSearch());
+                          context: context,
+                          delegate: CategorySearch(transIndex: 1));
                       tradeTitleController.text = result!;
                     },
                     autofocus: false,
-                    keyboardType: TextInputType.text,
-                    cursorColor: Colors.black,
+                    readOnly: true,
+                    showCursor: false,
                     validator: (str) {
                       if (str == null || str.isEmpty) return "required";
                       return null;

@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
 class CategorySearch extends SearchDelegate<String> {
+  CategorySearch({
+    @required this.transIndex,
+  });
+
+  final transIndex;
   String result = "";
+
   var categoryNames = [
     "Income",
     "Foods/Drink/Groceries",
@@ -20,7 +26,18 @@ class CategorySearch extends SearchDelegate<String> {
     "Others"
   ];
 
-  //categorySearch(this.categoryNames);
+  var assetNames = [
+    "BTC",
+    "ETH",
+    "ADA",
+    "BNB",
+    "USDT",
+    "XRP",
+    "SOL",
+    "DOGE",
+    "DOT",
+    "USDC"
+  ];
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -46,9 +63,16 @@ class CategorySearch extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
-    final suggestions = categoryNames.where((name) {
-      return name.toLowerCase().contains(query.toLowerCase());
-    });
+    var suggestions;
+    if (transIndex == 0) {
+      suggestions = categoryNames.where((name) {
+        return name.toLowerCase().contains(query.toLowerCase());
+      });
+    } else if (transIndex == 1) {
+      suggestions = assetNames.where((name) {
+        return name.toLowerCase().contains(query.toLowerCase());
+      });
+    }
 
     return ListView.builder(
       itemCount: suggestions.length,
@@ -69,9 +93,16 @@ class CategorySearch extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final suggestions = categoryNames.where((name) {
-      return name.toLowerCase().contains(query.toLowerCase());
-    });
+    var suggestions;
+    if (transIndex == 0) {
+      suggestions = categoryNames.where((name) {
+        return name.toLowerCase().contains(query.toLowerCase());
+      });
+    } else if (transIndex == 1) {
+      suggestions = assetNames.where((name) {
+        return name.toLowerCase().contains(query.toLowerCase());
+      });
+    }
 
     return ListView.builder(
       itemCount: suggestions.length,

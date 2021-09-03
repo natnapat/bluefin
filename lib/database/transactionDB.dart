@@ -71,7 +71,58 @@ class TransactionDB {
   Future<List<TradeTransactionModel>> getTradeTransaction(
       int type, String? asset, String? startDate, String? endDate) async {
     Database db = await initDB();
-    List<Map<String, Object?>> datas = await db.query("tradeTransaction");
+    List<Map<String, Object?>> datas = [];
+
+    print(type);
+    print(asset);
+    print(startDate);
+
+    if (type == 0) {
+      if (asset == "") {
+        if (startDate == "") {
+          print("hello null");
+          datas = await db.query("tradeTransaction");
+        } else {
+          datas = await db.rawQuery(
+              'SELECT * FROM tradeTransaction WHERE tradeDate BETWEEN ? and ?',
+              [startDate, endDate]);
+        }
+      } else {
+        datas = await db.rawQuery(
+            'SELECT * FROM tradeTransaction WHERE tradeTitle = ?', [asset]);
+      }
+    } else if (type == 1) {
+      if (asset == "") {
+        if (startDate == "") {
+          datas = await db.rawQuery(
+              'SELECT * FROM tradeTransaction WHERE tradeAmount > ?', [0]);
+        } else {
+          datas = await db.rawQuery(
+              'SELECT * FROM tradeTransaction WHERE tradeAmount > 0 AND tradeDate BETWEEN ? and ?',
+              [startDate, endDate]);
+        }
+      } else {
+        datas = await db.rawQuery(
+            'SELECT * FROM tradeTransaction WHERE tradeAmount > 0 AND tradeTitle = ?',
+            [asset]);
+      }
+    } else if (type == 2) {
+      if (asset == "") {
+        if (startDate == "") {
+          datas = await db.rawQuery(
+              'SELECT * FROM tradeTransaction WHERE tradeAmount < ?', [0]);
+        } else {
+          datas = await db.rawQuery(
+              'SELECT * FROM tradeTransaction WHERE tradeAmount < 0 AND tradeDate BETWEEN ? and ?',
+              [startDate, endDate]);
+        }
+      } else {
+        datas = await db.rawQuery(
+            'SELECT * FROM tradeTransaction WHERE tradeAmount < 0 AND tradeTitle = ?',
+            [asset]);
+      }
+    }
+    //print(datas);
     return datas.map((e) => TradeTransactionModel.fromMap(e)).toList();
   }
 

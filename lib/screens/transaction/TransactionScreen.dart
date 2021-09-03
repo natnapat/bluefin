@@ -52,7 +52,7 @@ class _TransactionScreenState extends State<TransactionScreen> {
                       ),
                       context: context,
                       builder: (context) {
-                        return FilterModal();
+                        return FilterModal(transIndex: transIndex);
                       });
                 },
                 //highlightColor: Colors.transparent,

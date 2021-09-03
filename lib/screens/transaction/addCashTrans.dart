@@ -135,7 +135,8 @@ class _AddCashTransState extends State<AddCashTrans> {
                   },
                   onTap: () async {
                     final result = await showSearch(
-                        context: context, delegate: CategorySearch());
+                        context: context,
+                        delegate: CategorySearch(transIndex: 0));
                     categoryController.text = result!;
                   },
                   decoration: InputDecoration(

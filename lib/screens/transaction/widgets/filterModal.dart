@@ -1,3 +1,4 @@
+import 'package:bluefin/providers/tradeTransactionProvider.dart';
 import 'package:bluefin/screens/transaction/widgets/categorySearch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,13 +7,17 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 class FilterModal extends StatefulWidget {
-  const FilterModal({Key? key}) : super(key: key);
+  final int transIndex;
+  const FilterModal({Key? key, required this.transIndex}) : super(key: key);
 
   @override
-  _FilterModalState createState() => _FilterModalState();
+  _FilterModalState createState() => _FilterModalState(transIndex);
 }
 
 class _FilterModalState extends State<FilterModal> {
+  int transIndex;
+  _FilterModalState(this.transIndex);
+
   final _formKey = GlobalKey<FormState>();
   TextEditingController categoryFilterController = TextEditingController();
   TextEditingController startDate = TextEditingController();
@@ -70,6 +75,7 @@ class _FilterModalState extends State<FilterModal> {
                             incomeButtonColor = Colors.transparent;
                             expenseButtonColor = Colors.transparent;
                             print("select all");
+                            print(transIndex);
                           });
                         },
                         child: Text("All",
@@ -94,7 +100,7 @@ class _FilterModalState extends State<FilterModal> {
                             print("select income");
                           });
                         },
-                        child: Text("Income",
+                        child: Text(transIndex == 0 ? "Income" : "Buy",
                             style: TextStyle(
                                 color: filterType == 1
                                     ? Colors.white
@@ -117,7 +123,7 @@ class _FilterModalState extends State<FilterModal> {
                           });
                         },
                         child: Text(
-                          "Expense",
+                          transIndex == 0 ? "Expense" : "Sell",
                           style: TextStyle(
                               color: filterType == 2
                                   ? Colors.white
@@ -132,7 +138,8 @@ class _FilterModalState extends State<FilterModal> {
                 controller: categoryFilterController,
                 onTap: () async {
                   final result = await showSearch(
-                      context: context, delegate: CategorySearch());
+                      context: context,
+                      delegate: CategorySearch(transIndex: transIndex));
                   categoryFilterController.text = result!;
                 },
                 showCursor: false,
@@ -140,7 +147,7 @@ class _FilterModalState extends State<FilterModal> {
                 //keyboardType: TextInputType.text,
                 //cursorColor: Colors.black,
                 decoration: InputDecoration(
-                  labelText: "Category",
+                  labelText: transIndex == 0 ? "Category" : "Asset",
                   labelStyle: TextStyle(color: Colors.black),
                   focusedBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.amber)),
@@ -225,15 +232,27 @@ class _FilterModalState extends State<FilterModal> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           print("filtered");
-                          var provider = Provider.of<CashTransactionProvider>(
-                              context,
-                              listen: false);
-                          provider.cashFilter(
-                              filterType,
-                              categoryFilterController.text,
-                              startDate.text,
-                              endDate.text);
-                          Navigator.pop(context);
+                          if (transIndex == 0) {
+                            var provider = Provider.of<CashTransactionProvider>(
+                                context,
+                                listen: false);
+                            provider.cashFilter(
+                                filterType,
+                                categoryFilterController.text,
+                                startDate.text,
+                                endDate.text);
+                            Navigator.pop(context);
+                          } else if (transIndex == 1) {
+                            var provider =
+                                Provider.of<TradeTransactionProvider>(context,
+                                    listen: false);
+                            provider.tradeFilter(
+                                filterType,
+                                categoryFilterController.text,
+                                startDate.text,
+                                endDate.text);
+                            Navigator.pop(context);
+                          }
                         }
                       },
                       child: Text(

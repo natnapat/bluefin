@@ -82,6 +82,8 @@ class TransactionDB {
         if (startDate == "") {
           print("hello null");
           datas = await db.query("tradeTransaction");
+
+          //print(datas);
         } else {
           datas = await db.rawQuery(
               'SELECT * FROM tradeTransaction WHERE tradeDate BETWEEN ? and ?',
@@ -136,6 +138,22 @@ class TransactionDB {
       TradeTransactionModel tradeTransaction) async {
     Database db = await initDB();
     await db.insert("tradeTransaction", tradeTransaction.toMap());
+
+    List<Map<String, Object?>> datas = await db.rawQuery(
+        'SELECT symbol FROM asset WHERE symbol = ?',
+        [tradeTransaction.tradeTitle.toLowerCase()]);
+
+    if (datas.isNotEmpty) {
+      await db.rawUpdate('UPDATE asset SET hodl = hodl + ? WHERE symbol = ?', [
+        tradeTransaction.tradeAmount,
+        tradeTransaction.tradeTitle.toLowerCase()
+      ]);
+    } else {
+      await db.rawInsert('INSERT INTO asset(symbol,hodl) VALUES (?, ?)', [
+        tradeTransaction.tradeTitle.toLowerCase(),
+        tradeTransaction.tradeAmount
+      ]);
+    }
   }
 
   Future<void> deleteTransaction(int? id, int transactionType) async {
@@ -144,6 +162,14 @@ class TransactionDB {
       await db.delete("cashTransaction", where: "id=?", whereArgs: [id]);
       print("delete cash transaction at index $id");
     } else if (transactionType == 1) {
+      List<Map<String, Object?>> datas = await db.rawQuery(
+          'SELECT LOWER(tradeTitle),tradeAmount FROM tradeTransaction WHERE tradeID = ?',
+          [id]);
+
+      print(datas);
+      await db.rawUpdate('UPDATE asset SET hodl = hodl - ? WHERE symbol = ?',
+          [datas[0]['tradeAmount'], datas[0]['LOWER(tradeTitle)']]);
+
       await db.delete("tradeTransaction", where: "tradeID=?", whereArgs: [id]);
       print("delete trade transaction at index $id");
     }

@@ -1,5 +1,6 @@
 import 'package:bluefin/providers/cashTransactionProvider.dart';
 import 'package:bluefin/providers/tradeTransactionProvider.dart';
+import 'package:bluefin/screens/market/MarketScreen.dart';
 import 'package:bluefin/screens/transaction/TransactionScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,22 +15,24 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) {
-          return CashTransactionProvider();
-        }),
-        ChangeNotifierProvider(create: (context) {
-          return TradeTransactionProvider();
-        })
-      ],
-      child: MaterialApp(
+        providers: [
+          ChangeNotifierProvider(create: (context) {
+            return CashTransactionProvider();
+          }),
+          ChangeNotifierProvider(create: (context) {
+            return TradeTransactionProvider();
+          })
+        ],
+        child: MaterialApp(
           title: "Bluefin",
           home: MyStatefulWidget(),
           theme: ThemeData(
-            highlightColor: Colors.transparent,
-            splashColor: Colors.transparent,
-          )),
-    );
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              canvasColor: Colors.grey[200],
+              bottomSheetTheme:
+                  BottomSheetThemeData(backgroundColor: Colors.white)),
+        ));
   }
 }
 
@@ -50,7 +53,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
       case 0:
         return Text("hello");
       case 1:
-        return Text("hello");
+        return MarketScreen();
       case 2:
         return TransactionScreen();
       case 3:
@@ -71,6 +74,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
       child: Scaffold(
         body: pageSelect(),
         bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Colors.white,
           type: BottomNavigationBarType.fixed,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(

@@ -1,4 +1,5 @@
 import 'package:bluefin/providers/tradeTransactionProvider.dart';
+import 'package:bluefin/screens/market/widgets/assetSearch.dart';
 import 'package:bluefin/screens/transaction/widgets/categorySearch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -139,7 +140,8 @@ class _FilterModalState extends State<FilterModal> {
                 onTap: () async {
                   final result = await showSearch(
                       context: context,
-                      delegate: CategorySearch(transIndex: transIndex));
+                      delegate:
+                          transIndex == 0 ? CategorySearch() : AssetSearch());
                   categoryFilterController.text = result!;
                 },
                 showCursor: false,

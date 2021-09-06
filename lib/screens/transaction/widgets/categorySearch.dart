@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+// import 'package:http/http.dart' as http;
+// import 'dart:convert';
 
 class CategorySearch extends SearchDelegate<String> {
-  CategorySearch({
-    @required this.transIndex,
-  });
+  // CategorySearch({
+  //   @required this.transIndex,
+  // });
 
-  final transIndex;
+  //final transIndex;
   String result = "";
 
   var categoryNames = [
@@ -24,19 +26,6 @@ class CategorySearch extends SearchDelegate<String> {
     "Electricity/Water",
     "Phone/Internet",
     "Others"
-  ];
-
-  var assetNames = [
-    "BTC",
-    "ETH",
-    "ADA",
-    "BNB",
-    "USDT",
-    "XRP",
-    "SOL",
-    "DOGE",
-    "DOT",
-    "USDC"
   ];
 
   @override
@@ -64,15 +53,10 @@ class CategorySearch extends SearchDelegate<String> {
   @override
   Widget buildResults(BuildContext context) {
     var suggestions;
-    if (transIndex == 0) {
-      suggestions = categoryNames.where((name) {
-        return name.toLowerCase().contains(query.toLowerCase());
-      });
-    } else if (transIndex == 1) {
-      suggestions = assetNames.where((name) {
-        return name.toLowerCase().contains(query.toLowerCase());
-      });
-    }
+
+    suggestions = categoryNames.where((name) {
+      return name.toLowerCase().contains(query.toLowerCase());
+    });
 
     return ListView.builder(
       itemCount: suggestions.length,
@@ -93,21 +77,15 @@ class CategorySearch extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    var suggestions;
-    if (transIndex == 0) {
-      suggestions = categoryNames.where((name) {
-        return name.toLowerCase().contains(query.toLowerCase());
-      });
-    } else if (transIndex == 1) {
-      suggestions = assetNames.where((name) {
-        return name.toLowerCase().contains(query.toLowerCase());
-      });
-    }
+    final suggestions = categoryNames.where((name) {
+      return name.toLowerCase().contains(query.toLowerCase());
+    });
 
     return ListView.builder(
       itemCount: suggestions.length,
       itemBuilder: (BuildContext context, int index) {
         return ListTile(
+          tileColor: Colors.white,
           title: Text(
             suggestions.elementAt(index),
           ),

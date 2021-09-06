@@ -1,3 +1,4 @@
+import 'package:bluefin/screens/market/widgets/assetSearch.dart';
 import 'package:bluefin/screens/transaction/widgets/categorySearch.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -35,6 +36,7 @@ class _AddTradeTransState extends State<AddTradeTrans> {
             ),
           ),
           body: Container(
+            color: Colors.white,
             padding: EdgeInsets.fromLTRB(30, 20, 30, 30),
             child: Column(
               children: [
@@ -44,8 +46,7 @@ class _AddTradeTransState extends State<AddTradeTrans> {
                     controller: tradeTitleController,
                     onTap: () async {
                       final result = await showSearch(
-                          context: context,
-                          delegate: CategorySearch(transIndex: 1));
+                          context: context, delegate: AssetSearch());
                       tradeTitleController.text = result!;
                     },
                     autofocus: false,

@@ -149,9 +149,11 @@ class TransactionDB {
         tradeTransaction.tradeTitle.toLowerCase()
       ]);
     } else {
-      await db.rawInsert('INSERT INTO asset(symbol,hodl) VALUES (?, ?)', [
+      await db.rawInsert(
+          'INSERT INTO asset(symbol,hodl,favorite) VALUES (?, ?, ?)', [
         tradeTransaction.tradeTitle.toLowerCase(),
-        tradeTransaction.tradeAmount
+        tradeTransaction.tradeAmount,
+        0
       ]);
     }
   }

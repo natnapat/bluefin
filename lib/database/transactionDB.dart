@@ -22,7 +22,7 @@ class TransactionDB {
     if (type == 0) {
       if (category == "") {
         if (startDate == "") {
-          print("hello null");
+          //print("hello null");
           datas = await db.query("cashTransaction");
         } else {
           datas = await db.rawQuery(

@@ -1,3 +1,4 @@
+import 'package:bluefin/screens/market/widgets/assetSearch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 
@@ -22,6 +23,7 @@ class _MarketScreenState extends State<MarketScreen> {
               title: GestureDetector(
                 onTap: () {
                   print("search");
+                  showSearch(context: context, delegate: AssetSearch());
                 },
                 child: Container(
                   width: 350,

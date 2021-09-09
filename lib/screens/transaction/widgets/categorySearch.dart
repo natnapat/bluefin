@@ -12,6 +12,7 @@ class CategorySearch extends SearchDelegate<String> {
 
   var categoryNames = [
     "Income",
+    "Housing",
     "Foods/Drink/Groceries",
     "Salary",
     "Dining/Meal",

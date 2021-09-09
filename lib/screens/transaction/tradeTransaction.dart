@@ -50,6 +50,7 @@ class _TradeTransactionState extends State<TradeTransaction> {
                           alignment: Alignment.centerRight,
                           child: Icon(
                             MaterialCommunityIcons.trash_can_outline,
+                            color: Colors.white,
                           ))),
                   child: Card(
                     shape: RoundedRectangleBorder(

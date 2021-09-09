@@ -47,7 +47,8 @@ class _CashTransactionState extends State<CashTransaction> {
                       child: Align(
                           alignment: Alignment.centerRight,
                           child: Icon(
-                            MaterialCommunityIcons.filter_outline,
+                            MaterialCommunityIcons.trash_can_outline,
+                            color: Colors.white,
                           ))),
                   child: Card(
                       shape: RoundedRectangleBorder(

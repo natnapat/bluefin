@@ -1,7 +1,8 @@
 import 'package:bluefin/providers/cashTransactionProvider.dart';
+import 'package:bluefin/providers/planProvider.dart';
 import 'package:bluefin/providers/tradeTransactionProvider.dart';
 import 'package:bluefin/screens/market/MarketScreen.dart';
-import 'package:bluefin/screens/planning/planningScreen.dart';
+import 'package:bluefin/screens/planning/PlanningScreen.dart';
 import 'package:bluefin/screens/transaction/TransactionScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +23,9 @@ class MyApp extends StatelessWidget {
           }),
           ChangeNotifierProvider(create: (context) {
             return TradeTransactionProvider();
+          }),
+          ChangeNotifierProvider(create: (context) {
+            return PlanProvider();
           })
         ],
         child: MaterialApp(

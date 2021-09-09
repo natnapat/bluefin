@@ -4,7 +4,7 @@ import 'package:date_time_picker/date_time_picker.dart';
 import 'package:bluefin/models/cashTransactionModel.dart';
 import 'package:bluefin/providers/cashTransactionProvider.dart';
 import 'package:provider/provider.dart';
-import 'package:bluefin/functions/autoCategory.dart';
+//import 'package:bluefin/functions/autoCategory.dart';
 
 class AddCashTrans extends StatefulWidget {
   const AddCashTrans({Key? key}) : super(key: key);

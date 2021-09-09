@@ -1,8 +1,10 @@
+import 'package:bluefin/providers/planProvider.dart';
 import 'package:bluefin/screens/planning/widgets/calculator.dart';
 import 'package:bluefin/screens/transaction/widgets/categorySearch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class AddPlan extends StatefulWidget {
   const AddPlan({Key? key}) : super(key: key);
@@ -28,6 +30,10 @@ class _AddPlanState extends State<AddPlan> {
   Map reservedTemp = {'type': 'reserved', 'reservedType': '', 'amount': 0};
   Map spendTemp = {'type': 'spend', 'spendType': '', 'price': 0, 'unit': 0};
 
+  bool leapYear(int year) {
+    return year % 4 == 0 && year % 100 != 0 || year % 400 == 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -37,7 +43,7 @@ class _AddPlanState extends State<AddPlan> {
             backgroundColor: Colors.white,
             iconTheme: IconThemeData(color: Colors.black),
             title: Text(
-              'Add Plan',
+              'Add Monthly Plan',
               style: TextStyle(color: Colors.black),
             ),
             actions: [Calculator()],
@@ -188,81 +194,78 @@ class _AddPlanState extends State<AddPlan> {
                     )
                   ],
                 ),
-                Row(
-                  children: [
-                    Container(
-                      child: Text("Spend"),
-                    ),
-                    Container(
-                      width: 120,
-                      height: 30,
-                      margin: EdgeInsets.only(left: 10),
-                      child: TextFormField(
-                        controller: fixedCost,
-                        onTap: () async {
-                          final result = await showSearch(
-                              context: context, delegate: CategorySearch());
-                          fixedCost.text = result!;
-                        },
-                        showCursor: false,
-                        readOnly: true,
-                        decoration: InputDecoration(
-                            hintText: "Fixed cost",
-                            hintStyle: TextStyle(fontSize: 15)),
-                      ),
-                    ),
-                    Container(
-                      width: 60,
-                      height: 20,
-                      margin: EdgeInsets.only(left: 10, top: 10),
-                      child: TextFormField(
-                        controller: pricePerUnit,
-                        decoration: InputDecoration(
-                            hintText: "price",
-                            hintStyle: TextStyle(fontSize: 15)),
-                      ),
-                    ),
-                    Container(
-                      width: 60,
-                      height: 20,
-                      margin: EdgeInsets.only(left: 10, top: 10),
-                      child: TextFormField(
-                        controller: unit,
-                        onChanged: (str) {
-                          unit.text = str;
-                        },
-                        decoration: InputDecoration(
-                            hintText: "unit",
-                            hintStyle: TextStyle(fontSize: 15)),
-                      ),
-                    ),
-                    Container(
-                      child: IconButton(
-                        onPressed: () {
-                          //{'type': 'spend', 'price': 0, 'unit': 0};
-                          spendTemp['spendType'] = fixedCost.text;
-                          spendTemp['price'] = double.parse(pricePerUnit.text);
-                          spendTemp['unit'] = int.parse(unit.text);
-                          print(spendTemp);
-                          setState(() {
-                            rules.add(spendTemp);
-                            spendTemp = {
-                              'type': 'spend',
-                              'price': 0,
-                              'unit': 0
-                            };
-                          });
+                // Row(
+                //   children: [
+                //     Container(
+                //       child: Text("Spend"),
+                //     ),
+                //     Container(
+                //       width: 120,
+                //       height: 30,
+                //       margin: EdgeInsets.only(left: 10),
+                //       child: TextFormField(
+                //         controller: fixedCost,
+                //         onTap: () async {
+                //           final result = await showSearch(
+                //               context: context, delegate: CategorySearch());
+                //           fixedCost.text = result!;
+                //         },
+                //         showCursor: false,
+                //         readOnly: true,
+                //         decoration: InputDecoration(
+                //             hintText: "Fixed cost",
+                //             hintStyle: TextStyle(fontSize: 15)),
+                //       ),
+                //     ),
+                //     Container(
+                //       width: 60,
+                //       height: 20,
+                //       margin: EdgeInsets.only(left: 10, top: 10),
+                //       child: TextFormField(
+                //         controller: pricePerUnit,
+                //         decoration: InputDecoration(
+                //             hintText: "price",
+                //             hintStyle: TextStyle(fontSize: 15)),
+                //       ),
+                //     ),
+                //     Container(
+                //       width: 60,
+                //       height: 20,
+                //       margin: EdgeInsets.only(left: 10, top: 10),
+                //       child: TextFormField(
+                //         controller: unit,
+                //         decoration: InputDecoration(
+                //             hintText: "unit",
+                //             hintStyle: TextStyle(fontSize: 15)),
+                //       ),
+                //     ),
+                //     Container(
+                //       child: IconButton(
+                //         onPressed: () {
+                //           //{'type': 'spend', 'price': 0, 'unit': 0};
+                //           spendTemp['spendType'] = fixedCost.text;
+                //           spendTemp['price'] = double.parse(pricePerUnit.text);
+                //           spendTemp['unit'] = int.parse(unit.text);
+                //           print(spendTemp);
+                //           setState(() {
+                //             rules.add(spendTemp);
+                //             spendTemp = {
+                //               'type': 'spend',
+                //               'price': 0,
+                //               'unit': 0
+                //             };
+                //           });
 
-                          fixedCost.text = '';
-                          pricePerUnit.text = '';
-                          unit.text = '';
-                        },
-                        icon: Icon(AntDesign.plus),
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ],
-                ),
+                //           fixedCost.text = '';
+                //           pricePerUnit.text = '';
+                //           unit.text = '';
+                //         },
+                //         icon: Icon(AntDesign.plus),
+                //         color: Colors.blue,
+                //       ),
+                //     ),
+                //   ],
+                // ),
                 Container(
                   width: MediaQuery.of(context).size.width - 60,
                   height: 400,
@@ -313,11 +316,26 @@ class _AddPlanState extends State<AddPlan> {
                           backgroundColor: Colors.blue),
                       onPressed: () {
                         double expense = 0;
+                        DateTime now = DateTime.now();
+                        int thisMonth = now.month;
+                        List m31d = [1, 3, 5, 7, 8, 10, 12];
+                        List m30d = [4, 6, 9, 11];
+                        int Febday = leapYear(now.year) == true ? 29 : 28;
+                        int daysInMonth = 0;
+                        if (m31d.contains(thisMonth))
+                          daysInMonth = 31;
+                        else if (m30d.contains(thisMonth))
+                          daysInMonth = 30;
+                        else
+                          daysInMonth = Febday;
+
                         for (int i = 0; i < rules.length; i++) {
                           if (rules[i]['type'] == 'reserved') {
                             expense += rules[i]['amount'];
                           } else {
-                            expense += rules[i]['price'] * rules[i]['unit'];
+                            expense += rules[i]['price'] *
+                                rules[i]['unit'] *
+                                daysInMonth;
                           }
                         }
                         print("income = ${incomeAmount.text}");
@@ -341,8 +359,7 @@ class _AddPlanState extends State<AddPlan> {
                                       ),
                                     ],
                                   ));
-                        }
-                        if (goalType == 'Saving') {
+                        } else if (goalType == 'Saving') {
                           if (double.parse(incomeAmount.text) - expense <
                               double.parse(goalAmount.text)) {
                             showDialog<String>(
@@ -363,7 +380,27 @@ class _AddPlanState extends State<AddPlan> {
                                         ),
                                       ],
                                     ));
+                          } else {
+                            print("insert");
+                            var provider = Provider.of<PlanProvider>(context,
+                                listen: false);
+                            provider.addPlan(
+                                goalType,
+                                double.parse(goalAmount.text),
+                                double.parse(incomeAmount.text),
+                                rules);
+                            Navigator.pop(context);
                           }
+                        } else {
+                          print("insert");
+                          var provider =
+                              Provider.of<PlanProvider>(context, listen: false);
+                          provider.addPlan(
+                              goalType,
+                              double.parse(goalAmount.text),
+                              double.parse(incomeAmount.text),
+                              rules);
+                          Navigator.pop(context);
                         }
                       },
                       child: Text(

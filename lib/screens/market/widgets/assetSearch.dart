@@ -7,7 +7,7 @@ class AssetSearch extends SearchDelegate<String> {
 
   Future<List> fetchAsset() async {
     var response1 = await http.get(Uri.parse(
-        'https://6ctfptnaf3.execute-api.ap-southeast-1.amazonaws.com/crypto'));
+        'https://6ctfptnaf3.execute-api.ap-southeast-1.amazonaws.com/crypto?cryptoID=false'));
     if (response1.statusCode != 200) {
       throw Exception('Failed to load');
     }

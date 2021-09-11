@@ -21,7 +21,7 @@ class PlanDB {
       if (rules[i]['type'] == 'reserved') {
         await db.rawInsert(
             'INSERT INTO reserve(planID,reservedType,reservedAmount,actualAmount,checked) VALUES(?,?,?,?,?)',
-            [planID, rules[i]['reservedType'], rules[i]['amount'], 0]);
+            [planID, rules[i]['reservedType'], rules[i]['amount'], 0, 0]);
       }
       // else if (rules[i]['type'] == 'spend') {
       //   await db.rawInsert(
@@ -48,8 +48,10 @@ class PlanDB {
 
   Future<List<Map<String, Object?>>> getReserved(int planID) async {
     Database db = await initDB();
+    //List<Map<String, Object?>> transaction = [];
     List<Map<String, Object?>> reserved =
         await db.rawQuery('SELECT * FROM reserve WHERE planID = ?', [planID]);
+
     return reserved;
   }
 

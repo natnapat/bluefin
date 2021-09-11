@@ -13,18 +13,21 @@ class PlanProvider with ChangeNotifier {
   //List<Map<String, Object?>> spend = [];
   List<Map<String, Object?>> plan = [];
   double expense = 0;
+
   void initData() async {
     PlanDB db = PlanDB();
     plan = await db.getPlan();
-    int planID = int.parse(plan[0]['planID'].toString());
-    print(planID);
-    reserved = await db.getReserved(planID);
-    //spend = await db.getSpend(planID);
-    print(reserved);
-    //print(spend);
-    expense = await db.getExpense(
-        plan[0]['startDate'].toString(), plan[0]['endDate'].toString());
-    print(expense);
+    if (plan.isNotEmpty) {
+      int planID = int.parse(plan[0]['planID'].toString());
+      print(planID);
+      reserved = await db.getReserved(planID);
+      //spend = await db.getSpend(planID);
+      print(reserved);
+      //print(spend);
+      expense = await db.getExpense(
+          plan[0]['startDate'].toString(), plan[0]['endDate'].toString());
+      print(expense);
+    }
     notifyListeners();
   }
 
@@ -32,6 +35,17 @@ class PlanProvider with ChangeNotifier {
     PlanDB db = PlanDB();
     await db.checked(rid);
     await db.initDB();
+    notifyListeners();
+  }
+
+  bool check = false;
+  void checkPlan() async {
+    PlanDB db = PlanDB();
+    plan = await db.getPlan();
+    if (plan.isNotEmpty)
+      check = true;
+    else
+      check = false;
     notifyListeners();
   }
 }

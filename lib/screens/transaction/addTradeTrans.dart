@@ -31,7 +31,7 @@ class _AddTradeTransState extends State<AddTradeTrans> {
             backgroundColor: Colors.white,
             iconTheme: IconThemeData(color: Colors.black),
             title: Text(
-              'Add Transaction',
+              'Add Trade',
               style: TextStyle(color: Colors.black),
             ),
           ),

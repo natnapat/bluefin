@@ -1,9 +1,12 @@
 import 'package:bluefin/providers/cashTransactionProvider.dart';
 import 'package:bluefin/providers/planProvider.dart';
 import 'package:bluefin/providers/tradeTransactionProvider.dart';
+import 'package:bluefin/providers/walletProvider.dart';
+
 import 'package:bluefin/screens/market/MarketScreen.dart';
 import 'package:bluefin/screens/planning/PlanningScreen.dart';
 import 'package:bluefin/screens/transaction/TransactionScreen.dart';
+import 'package:bluefin/screens/wallet/WalletScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
@@ -26,6 +29,9 @@ class MyApp extends StatelessWidget {
           }),
           ChangeNotifierProvider(create: (context) {
             return PlanProvider();
+          }),
+          ChangeNotifierProvider(create: (context) {
+            return WalletProvider();
           })
         ],
         child: MaterialApp(
@@ -62,7 +68,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
       case 2:
         return TransactionScreen();
       case 3:
-        return Text("hello");
+        return WalletScreen();
       case 4:
         return PlanningScreen();
       default:

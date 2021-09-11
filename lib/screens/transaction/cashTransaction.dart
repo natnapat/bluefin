@@ -26,7 +26,7 @@ class _CashTransactionState extends State<CashTransaction> {
         int count = provider.cashTrans.length;
         if (count <= 0) {
           return Center(
-            child: Text("No Transaction"),
+            child: Text("No Transaction, Add a plan first !"),
           );
         } else {
           return ListView.builder(
@@ -38,7 +38,8 @@ class _CashTransactionState extends State<CashTransaction> {
                   onDismissed: (direction) {
                     var provider = Provider.of<CashTransactionProvider>(context,
                         listen: false);
-                    provider.deleteCashTransaction(data.id, 0);
+                    provider.deleteCashTransaction(
+                        data.id, 0, data.category, data.amount);
                   },
                   direction: DismissDirection.endToStart,
                   background: Container(

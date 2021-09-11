@@ -33,7 +33,7 @@ class TradeTransactionProvider with ChangeNotifier {
   //delete a transaction in database
   void deleteTradeTransaction(int? id, int type) async {
     var db = TransactionDB();
-    await db.deleteTransaction(id, type);
+    await db.deleteTransaction(id, type, "", 0);
     tradeTrans = await db.getTradeTransaction(0, "", "", "");
     notifyListeners();
   }

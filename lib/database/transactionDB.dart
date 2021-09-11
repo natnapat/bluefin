@@ -131,7 +131,30 @@ class TransactionDB {
   Future<void> insertCashTransaction(
       CashTransactionModel cashTransaction) async {
     Database db = await initDB();
+
     await db.insert("cashTransaction", cashTransaction.toMap());
+    if (cashTransaction.amount < 0) {
+      List<Map<String, Object?>> plan = await db
+          .rawQuery('SELECT planID FROM plan ORDER BY planID DESC LIMIT 1');
+
+      print(cashTransaction.amount);
+      print(plan[0]['planID'].toString());
+      int planID = int.parse(plan[0]['planID'].toString());
+      await db.rawUpdate(
+          'UPDATE reserve SET actualAmount = actualAmount + ? WHERE planID = ? AND reservedType = ?',
+          [cashTransaction.amount * -1, planID, cashTransaction.category]);
+
+      List<Map<String, Object?>> reserved = await db.rawQuery(
+          'SELECT * FROM reserve WHERE planID = ? AND reservedType = ?',
+          [planID, cashTransaction.category]);
+
+      if (double.parse(reserved[0]['actualAmount'].toString()) >=
+          double.parse(reserved[0]['reservedAmount'].toString())) {
+        await db.rawUpdate(
+            'UPDATE reserve SET checked = 1 WHERE planID = ? AND reservedType = ?',
+            [planID, cashTransaction.category]);
+      }
+    }
   }
 
   Future<void> insertTradeTransaction(
@@ -158,9 +181,16 @@ class TransactionDB {
     }
   }
 
-  Future<void> deleteTransaction(int? id, int transactionType) async {
+  Future<void> deleteTransaction(int? id, int transactionType, String? category,
+      double? cashAmount) async {
     Database db = await initDB();
     if (transactionType == 0) {
+      List<Map<String, Object?>> datas = await db.rawQuery(
+          'SELECT MAX(planID) FROM reserve WHERE reservedType = ?', [category]);
+      int planID = int.parse(datas[0]['MAX(planID)'].toString());
+      await db.rawUpdate(
+          'UPDATE reserve SET actualAmount = actualAmount + ? WHERE planID = ? AND reservedType = ?',
+          [cashAmount, planID, category]);
       await db.delete("cashTransaction", where: "id=?", whereArgs: [id]);
       print("delete cash transaction at index $id");
     } else if (transactionType == 1) {

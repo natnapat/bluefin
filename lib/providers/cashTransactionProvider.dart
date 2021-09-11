@@ -31,10 +31,11 @@ class CashTransactionProvider with ChangeNotifier {
   }
 
   //delete a transaction in database
-  void deleteCashTransaction(int? id, int type) async {
+  void deleteCashTransaction(
+      int? id, int type, String? category, double? cashAmount) async {
     var db = TransactionDB();
 
-    await db.deleteTransaction(id, type);
+    await db.deleteTransaction(id, type, category, cashAmount);
     cashTrans = await db.getCashTransaction(0, "", "", "");
 
     notifyListeners();

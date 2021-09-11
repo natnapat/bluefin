@@ -40,7 +40,10 @@ class _TradeTransactionState extends State<TradeTransaction> {
                     var provider = Provider.of<TradeTransactionProvider>(
                         context,
                         listen: false);
-                    provider.deleteTradeTransaction(data.tradeID, 1);
+                    provider.deleteTradeTransaction(
+                      data.tradeID,
+                      1,
+                    );
                   },
                   direction: DismissDirection.endToStart,
                   background: Container(

@@ -1,33 +1,44 @@
 import 'package:flutter/foundation.dart';
 import 'package:bluefin/database/planDB.dart';
+import 'package:bluefin/models/monthlyPlanModel.dart';
 
 class PlanProvider with ChangeNotifier {
-  void addPlan(String goalType, double goalAmount, double income,
-      List<Map> rules) async {
-    var db = PlanDB();
-    await db.insertPlan(goalType, goalAmount, income, rules);
+  List<Map<String, Object?>> reserved = [];
+  List<MonthlyPlanModel> monthlyPlans = [];
+  double expense = 0;
+
+  List<MonthlyPlanModel> getAllMonthlyPlan() {
+    return monthlyPlans;
+  }
+
+  //get plan data
+  void initData() async {
+    PlanDB db = PlanDB();
+    monthlyPlans = await db.getAllMonthlyPlan();
+    if (monthlyPlans.isNotEmpty) {
+      print(monthlyPlans);
+      int planID = int.parse(monthlyPlans[0].monthlyPlanID.toString());
+      //print(planID);
+      reserved = await db.getReserveMonthly(planID);
+      print(reserved);
+      // expense = await db.getExpense(
+      //     monthlyPlans[0].startDate, monthlyPlans[0].startDate);
+      // print(expense);
+    }
     notifyListeners();
   }
 
-  List<Map<String, Object?>> reserved = [];
-  //List<Map<String, Object?>> spend = [];
-  List<Map<String, Object?>> plan = [];
-  double expense = 0;
-
-  void initData() async {
+  void getReserveMonthly(int? monthlyPlanID) async {
     PlanDB db = PlanDB();
-    plan = await db.getPlan();
-    if (plan.isNotEmpty) {
-      int planID = int.parse(plan[0]['planID'].toString());
-      print(planID);
-      reserved = await db.getReserved(planID);
-      //spend = await db.getSpend(planID);
-      print(reserved);
-      //print(spend);
-      expense = await db.getExpense(
-          plan[0]['startDate'].toString(), plan[0]['endDate'].toString());
-      print(expense);
-    }
+    reserved = await db.getReserveMonthly(monthlyPlanID);
+    print(reserved);
+  }
+
+  //add new plan
+  void addPlan(String goalType, double goalAmount, double income,
+      List<Map> rules, String deadLine) async {
+    var db = PlanDB();
+    await db.insertPlan(goalType, goalAmount, income, rules, deadLine);
     notifyListeners();
   }
 
@@ -38,11 +49,12 @@ class PlanProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  //check if there is a plan
   bool check = false;
   void checkPlan() async {
     PlanDB db = PlanDB();
-    plan = await db.getPlan();
-    if (plan.isNotEmpty)
+    monthlyPlans = await db.getAllMonthlyPlan();
+    if (monthlyPlans.isNotEmpty)
       check = true;
     else
       check = false;

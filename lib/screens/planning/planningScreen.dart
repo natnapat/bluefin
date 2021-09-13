@@ -1,6 +1,5 @@
 import 'package:bluefin/providers/planProvider.dart';
 import 'package:bluefin/screens/planning/addPlan.dart';
-import 'package:bluefin/screens/transaction/addCashTrans.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:intl/intl.dart';
@@ -22,9 +21,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
   @override
   Widget build(BuildContext context) {
     return Consumer(builder: (context, PlanProvider provider, Widget? child) {
-      int count = provider.reserved.length;
-      //print(count);
-      if (count <= 0) {
+      if (provider.monthlyPlans.isEmpty) {
         return AddPlan();
       } else {
         return Container(
@@ -69,8 +66,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                           margin: EdgeInsets.only(
                                               left: 20, top: 10),
                                           child: Text(
-                                            provider.plan[0]['goalType']
-                                                .toString(),
+                                            "",
                                             style: TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.w300),
@@ -81,12 +77,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                         child: Container(
                                           margin: EdgeInsets.only(
                                               left: 20, top: 10),
-                                          child: Text(
-                                              NumberFormat.simpleCurrency(
-                                                      locale: 'th')
-                                                  .format(provider.plan[0]
-                                                      ['amount'])
-                                                  .toString(),
+                                          child: Text("",
                                               style: TextStyle(
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.w300)),
@@ -111,10 +102,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                           margin: EdgeInsets.only(
                                               left: 20, top: 10),
                                           child: Text(
-                                            NumberFormat.simpleCurrency(
-                                                    locale: 'th')
-                                                .format(
-                                                    provider.plan[0]['income']),
+                                            "",
                                             style: TextStyle(
                                                 //color: Colors.redAccent,
                                                 fontSize: 16),
@@ -140,35 +128,13 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                             EdgeInsets.only(left: 20, top: 10),
                                         child: Text(
                                           (provider.expense * -1).toString(),
-                                          style: TextStyle(
-                                              color: provider.expense >
-                                                      (double.parse(provider
-                                                              .plan[0]['income']
-                                                              .toString()) -
-                                                          double.parse(provider
-                                                              .plan[0]['amount']
-                                                              .toString()))
-                                                  ? Colors.redAccent
-                                                  : Colors.grey,
-                                              fontSize: 16),
                                         ),
                                       ),
                                       Container(
                                         margin: EdgeInsets.only(
                                             left: 5, top: 10, right: 60),
                                         child: Text(
-                                          '/ ' +
-                                              NumberFormat.simpleCurrency(
-                                                      locale: 'th')
-                                                  .format((double.parse(provider
-                                                          .plan[0]['income']
-                                                          .toString()) -
-                                                      double.parse(provider
-                                                          .plan[0]['amount']
-                                                          .toString()))),
-                                          style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: 16),
+                                          "",
                                         ),
                                       ),
                                     ],
@@ -186,11 +152,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                       margin:
                                           EdgeInsets.only(left: 20, top: 10),
                                       child: Text(
-                                        DateFormat('dd-MM-yyyy').format(
-                                            DateTime.parse(provider.plan[0]
-                                                    ['startDate']
-                                                .toString())),
-                                        style: TextStyle(color: Colors.black45),
+                                        "",
                                       ),
                                     ),
                                     Container(
@@ -205,11 +167,7 @@ class _PlanningScreenState extends State<PlanningScreen> {
                                       margin:
                                           EdgeInsets.only(left: 20, top: 10),
                                       child: Text(
-                                        DateFormat('dd-MM-yyyy').format(
-                                            DateTime.parse(provider.plan[0]
-                                                    ['endDate']
-                                                .toString())),
-                                        style: TextStyle(color: Colors.black45),
+                                        "",
                                       ),
                                     ),
                                   ])

@@ -41,18 +41,22 @@ class _TransactionScreenState extends State<TransactionScreen> {
               )),
               leading: IconButton(
                   onPressed: () {
-                    if (provider.check == true) {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        if (transIndex == 0) {
+                    if (transIndex == 0) {
+                      if (provider.check == true) {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
                           return AddCashTrans();
-                        } else
-                          return AddTradeTrans();
-                      }));
+                        }));
+                      } else {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return AddPlan();
+                        }));
+                      }
                     } else {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
-                        return AddPlan();
+                        return AddTradeTrans();
                       }));
                     }
                   },

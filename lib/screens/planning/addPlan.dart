@@ -1,5 +1,7 @@
 import 'package:bluefin/providers/planProvider.dart';
+import 'package:bluefin/screens/planning/calendarScreen.dart';
 import 'package:bluefin/screens/planning/widgets/calculator.dart';
+import 'package:bluefin/screens/planning/widgets/deadLineBottomSheet.dart';
 import 'package:bluefin/screens/transaction/widgets/categorySearch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
@@ -18,6 +20,7 @@ class _AddPlanState extends State<AddPlan> {
 
   String goalType = "Saving";
   TextEditingController goalAmount = TextEditingController();
+  TextEditingController deadLine = TextEditingController();
   TextEditingController incomeAmount = TextEditingController();
   TextEditingController reservedType = TextEditingController();
   TextEditingController reservedAmount = TextEditingController();
@@ -28,11 +31,16 @@ class _AddPlanState extends State<AddPlan> {
   List<Map> rules = [];
   int id = 0;
   Map reservedTemp = {'type': 'reserved', 'reservedType': '', 'amount': 0};
-  Map spendTemp = {'type': 'spend', 'spendType': '', 'price': 0, 'unit': 0};
+  //Map spendTemp = {'type': 'spend', 'spendType': '', 'price': 0, 'unit': 0};
 
   bool leapYear(int year) {
     return year % 4 == 0 && year % 100 != 0 || year % 400 == 0;
   }
+
+  // void initState() {
+  //   super.initState();
+  //   deadLine.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +85,7 @@ class _AddPlanState extends State<AddPlan> {
                               goalType = newValue!;
                             });
                           },
-                          items: <String>['Saving', 'DCA', 'Budget']
+                          items: <String>['Saving', 'DCA']
                               .map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
@@ -87,7 +95,7 @@ class _AddPlanState extends State<AddPlan> {
                         ),
                       ),
                       Container(
-                        width: 70,
+                        width: 100,
                         height: 20,
                         margin: EdgeInsets.only(left: 10, top: 10),
                         child: TextFormField(
@@ -100,6 +108,61 @@ class _AddPlanState extends State<AddPlan> {
                     ],
                   ),
                 ),
+
+                //Dead Line Row
+                Row(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(left: 0, top: 10),
+                      child: Text("Deadline :"),
+                    ),
+                    Container(
+                      width: 100,
+                      height: 20,
+                      margin: EdgeInsets.only(left: 10, top: 15),
+                      child: TextFormField(
+                        controller: deadLine,
+                        showCursor: false,
+                        readOnly: true,
+                        decoration: InputDecoration(
+                            hintText: "deadline date",
+                            hintStyle: TextStyle(fontSize: 15)),
+                        onTap: () {
+                          showModalBottomSheet(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              context: context,
+                              builder: (context) {
+                                return DeadLineBottomSheet();
+                              }).then((value) {
+                            setState(() {
+                              if (value != null)
+                                deadLine.text =
+                                    DateFormat('yyyy-MM-dd').format(value);
+                              //print(deadLine.text);
+                            });
+                          });
+                        },
+                      ),
+                    ),
+                    Container(
+                        margin: EdgeInsets.only(left: 10),
+                        child: Text(deadLine.text.isNotEmpty
+                            ? DateTime.parse(deadLine.text)
+                                    .difference(DateTime(
+                                        DateTime.now().year,
+                                        DateTime.now().month,
+                                        DateTime.now().day))
+                                    .inDays
+                                    .toString() +
+                                ' days left'
+                            : '0')),
+                  ],
+                ),
+                // Container(
+                //     child: TextButton(onPressed: () {}, child: Text("hello"))),
+                //Income Row
                 Container(
                   child: Row(
                     children: [
@@ -107,9 +170,9 @@ class _AddPlanState extends State<AddPlan> {
                         child: Text("Income :"),
                       ),
                       Container(
-                        width: 90,
+                        width: 120,
                         height: 20,
-                        margin: EdgeInsets.only(left: 10, top: 20),
+                        margin: EdgeInsets.only(left: 10, top: 25),
                         child: TextFormField(
                           controller: incomeAmount,
                           decoration: InputDecoration(
@@ -126,7 +189,7 @@ class _AddPlanState extends State<AddPlan> {
                 ),
                 Container(
                   margin: EdgeInsets.only(top: 20),
-                  child: Text("Rule"),
+                  child: Text("Rule (per month)"),
                 ),
                 Divider(
                   thickness: 2,
@@ -134,10 +197,10 @@ class _AddPlanState extends State<AddPlan> {
                 Row(
                   children: [
                     Container(
-                      child: Text("Reserved for "),
+                      child: Text("Reserve:"),
                     ),
                     Container(
-                      width: 125,
+                      width: 160,
                       height: 30,
                       margin: EdgeInsets.only(left: 10),
                       child: TextFormField(
@@ -169,13 +232,28 @@ class _AddPlanState extends State<AddPlan> {
                     Container(
                       child: IconButton(
                         onPressed: () {
-                          //{'type': 'reserved', 'reservedType': '', 'amount': 0}
+                          //print(reservedTemp);
                           reservedTemp['reservedType'] = reservedType.text;
                           reservedTemp['amount'] =
                               double.parse(reservedAmount.text);
-                          print(reservedTemp);
+
+                          bool isDuplicateType = false;
                           setState(() {
-                            rules.add(reservedTemp);
+                            if (reservedTemp['reservedType'] != "Income" &&
+                                reservedTemp['reservedType'] != "Salary" &&
+                                reservedTemp['amount'] > 0) {
+                              for (int i = 0; i < rules.length; i++) {
+                                if (rules[i]['reservedType'] ==
+                                    reservedTemp['reservedType']) {
+                                  isDuplicateType = true;
+                                  rules[i]['amount'] += reservedTemp['amount'];
+                                  break;
+                                }
+                              }
+
+                              if (isDuplicateType == false)
+                                rules.add(reservedTemp);
+                            }
                             reservedTemp = {
                               'type': 'reserved',
                               'reservedType': '',
@@ -194,82 +272,10 @@ class _AddPlanState extends State<AddPlan> {
                     )
                   ],
                 ),
-                // Row(
-                //   children: [
-                //     Container(
-                //       child: Text("Spend"),
-                //     ),
-                //     Container(
-                //       width: 120,
-                //       height: 30,
-                //       margin: EdgeInsets.only(left: 10),
-                //       child: TextFormField(
-                //         controller: fixedCost,
-                //         onTap: () async {
-                //           final result = await showSearch(
-                //               context: context, delegate: CategorySearch());
-                //           fixedCost.text = result!;
-                //         },
-                //         showCursor: false,
-                //         readOnly: true,
-                //         decoration: InputDecoration(
-                //             hintText: "Fixed cost",
-                //             hintStyle: TextStyle(fontSize: 15)),
-                //       ),
-                //     ),
-                //     Container(
-                //       width: 60,
-                //       height: 20,
-                //       margin: EdgeInsets.only(left: 10, top: 10),
-                //       child: TextFormField(
-                //         controller: pricePerUnit,
-                //         decoration: InputDecoration(
-                //             hintText: "price",
-                //             hintStyle: TextStyle(fontSize: 15)),
-                //       ),
-                //     ),
-                //     Container(
-                //       width: 60,
-                //       height: 20,
-                //       margin: EdgeInsets.only(left: 10, top: 10),
-                //       child: TextFormField(
-                //         controller: unit,
-                //         decoration: InputDecoration(
-                //             hintText: "unit",
-                //             hintStyle: TextStyle(fontSize: 15)),
-                //       ),
-                //     ),
-                //     Container(
-                //       child: IconButton(
-                //         onPressed: () {
-                //           //{'type': 'spend', 'price': 0, 'unit': 0};
-                //           spendTemp['spendType'] = fixedCost.text;
-                //           spendTemp['price'] = double.parse(pricePerUnit.text);
-                //           spendTemp['unit'] = int.parse(unit.text);
-                //           print(spendTemp);
-                //           setState(() {
-                //             rules.add(spendTemp);
-                //             spendTemp = {
-                //               'type': 'spend',
-                //               'price': 0,
-                //               'unit': 0
-                //             };
-                //           });
-
-                //           fixedCost.text = '';
-                //           pricePerUnit.text = '';
-                //           unit.text = '';
-                //         },
-                //         icon: Icon(AntDesign.plus),
-                //         color: Colors.blue,
-                //       ),
-                //     ),
-                //   ],
-                // ),
                 Container(
                   width: MediaQuery.of(context).size.width - 60,
                   height: 400,
-                  margin: EdgeInsets.fromLTRB(0, 20, 0, 10),
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
                   decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(color: Colors.grey.withOpacity(0.2))),
@@ -315,38 +321,15 @@ class _AddPlanState extends State<AddPlan> {
                           primary: Colors.white,
                           backgroundColor: Colors.blue),
                       onPressed: () {
-                        double expense = 0;
-                        DateTime now = DateTime.now();
-                        int thisMonth = now.month;
-                        List m31d = [1, 3, 5, 7, 8, 10, 12];
-                        List m30d = [4, 6, 9, 11];
-                        int Febday = leapYear(now.year) == true ? 29 : 28;
-                        int daysInMonth = 0;
-                        if (m31d.contains(thisMonth))
-                          daysInMonth = 31;
-                        else if (m30d.contains(thisMonth))
-                          daysInMonth = 30;
-                        else
-                          daysInMonth = Febday;
-
-                        for (int i = 0; i < rules.length; i++) {
-                          if (rules[i]['type'] == 'reserved') {
-                            expense += rules[i]['amount'];
-                          } else {
-                            expense += rules[i]['price'] *
-                                rules[i]['unit'] *
-                                daysInMonth;
-                          }
-                        }
-                        print("income = ${incomeAmount.text}");
-                        print("expense = ${expense}");
-                        if (expense > double.parse(incomeAmount.text)) {
+                        if (goalAmount.text.isEmpty ||
+                            deadLine.text.isEmpty ||
+                            incomeAmount.text.isEmpty ||
+                            rules.isEmpty) {
                           showDialog<String>(
                               context: context,
                               builder: (BuildContext context) => AlertDialog(
-                                    title: const Text('Expense > Income'),
-                                    content: const Text(
-                                        'Please remove some rule from your spending plan'),
+                                    title: const Text('Saving Error'),
+                                    content: const Text("Fill every blank."),
                                     actions: <Widget>[
                                       TextButton(
                                         onPressed: () =>
@@ -359,15 +342,20 @@ class _AddPlanState extends State<AddPlan> {
                                       ),
                                     ],
                                   ));
-                        } else if (goalType == 'Saving') {
-                          if (double.parse(incomeAmount.text) - expense <
-                              double.parse(goalAmount.text)) {
+                        } else {
+                          double expense = 0;
+                          for (int i = 0; i < rules.length; i++) {
+                            expense += rules[i]['amount'];
+                          }
+                          print("income = ${incomeAmount.text}");
+                          print("expense = ${expense}");
+                          if (expense > double.parse(incomeAmount.text)) {
                             showDialog<String>(
                                 context: context,
                                 builder: (BuildContext context) => AlertDialog(
-                                      title: const Text('Saving Error'),
+                                      title: const Text('Expense > Income'),
                                       content: const Text(
-                                          "Your expense doesn't match with your saving plan. Please remove some rules. "),
+                                          'Please remove some rule from your spending plan'),
                                       actions: <Widget>[
                                         TextButton(
                                           onPressed: () =>
@@ -380,27 +368,43 @@ class _AddPlanState extends State<AddPlan> {
                                         ),
                                       ],
                                     ));
-                          } else {
-                            print("insert");
+                          }
+                          // else if (double.parse(incomeAmount.text) - expense <
+                          //     double.parse(goalAmount.text)) {
+                          //   showDialog<String>(
+                          //       context: context,
+                          //       builder: (BuildContext context) => AlertDialog(
+                          //             title: const Text('Saving Error'),
+                          //             content: const Text(
+                          //                 "Your expense doesn't match with your saving plan. Please remove some rules. "),
+                          //             actions: <Widget>[
+                          //               TextButton(
+                          //                 onPressed: () =>
+                          //                     Navigator.pop(context, 'Close'),
+                          //                 child: const Text(
+                          //                   'Close',
+                          //                   style: TextStyle(
+                          //                       color: Colors.redAccent),
+                          //                 ),
+                          //               ),
+                          //             ],
+                          //           ));
+                          // }
+                          else {
                             var provider = Provider.of<PlanProvider>(context,
                                 listen: false);
                             provider.addPlan(
                                 goalType,
                                 double.parse(goalAmount.text),
                                 double.parse(incomeAmount.text),
-                                rules);
-                            Navigator.pop(context);
+                                rules,
+                                deadLine.text);
+                            print("insert plan");
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return CalendarScreen();
+                            }));
                           }
-                        } else {
-                          print("insert");
-                          var provider =
-                              Provider.of<PlanProvider>(context, listen: false);
-                          provider.addPlan(
-                              goalType,
-                              double.parse(goalAmount.text),
-                              double.parse(incomeAmount.text),
-                              rules);
-                          Navigator.pop(context);
                         }
                       },
                       child: Text(

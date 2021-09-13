@@ -17,6 +17,7 @@ class _WalletScreenState extends State<WalletScreen> {
     super.initState();
     Provider.of<WalletProvider>(context, listen: false).myAssetData();
     Provider.of<WalletProvider>(context, listen: false).getCashBalance();
+    print(Provider.of<WalletProvider>(context, listen: false).myCryptoDatas);
   }
 
   @override
@@ -143,129 +144,134 @@ class _WalletScreenState extends State<WalletScreen> {
                         maxHeight: 500,
                         minHeight: 200,
                         minWidth: MediaQuery.of(context).size.width),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: provider.myCryptoDatas.length,
-                      itemBuilder: (context, index) {
-                        var datas = provider.myCryptoDatas;
-                        print(datas.length);
-                        if (datas.isEmpty) {
-                          return Center(
+                    child: provider.myCryptoDatas.isEmpty
+                        ? Center(
                             child: Text("No Asset"),
-                          );
-                        } else {
-                          return (Container(
-                            height: 90,
-                            child: Card(
-                                elevation: 3,
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      //color: Colors.grey,
-                                      width: 40,
-                                      height: 40,
-                                      margin: EdgeInsets.all(10),
-                                      child:
-                                          Image.network(datas[index]['image']),
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        // color: Colors.grey,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                                margin: EdgeInsets.only(
-                                                    top: 20, left: 5),
-                                                child: Text(
-                                                  datas[index]['name'] +
-                                                      ' (' +
-                                                      datas[index]['symbol']
-                                                          .toString()
-                                                          .toUpperCase() +
-                                                      ')',
-                                                  style:
-                                                      TextStyle(fontSize: 16),
-                                                )),
-                                            Container(
-                                                margin: EdgeInsets.only(
-                                                    top: 5, left: 5),
-                                                child: Text(
-                                                  datas[index]['hodl']
-                                                      .toStringAsFixed(4),
-                                                  style: TextStyle(
-                                                      color: Colors.grey),
-                                                ))
-                                          ],
+                          )
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: provider.myCryptoDatas.length,
+                            itemBuilder: (context, index) {
+                              var datas = provider.myCryptoDatas;
+
+                              return (Container(
+                                height: 90,
+                                child: Card(
+                                    elevation: 3,
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          //color: Colors.grey,
+                                          width: 40,
+                                          height: 40,
+                                          margin: EdgeInsets.all(10),
+                                          child: Image.network(
+                                              datas[index]['image']),
                                         ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            Container(
-                                                margin: EdgeInsets.only(
-                                                    top: 21, right: 15),
-                                                child: Text(
-                                                  NumberFormat.simpleCurrency(
-                                                          locale: 'th')
-                                                      .format(datas[index]
-                                                          ['ownedValue']),
-                                                )),
-                                            Row(
+                                        Expanded(
+                                          child: Container(
+                                            // color: Colors.grey,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
-                                                Expanded(
-                                                  child: Container(
-                                                      alignment:
-                                                          Alignment.centerRight,
-                                                      margin: EdgeInsets.only(
-                                                          top: 5),
-                                                      child: Text(
-                                                        datas[index][
-                                                                    'price_change_percentage_24h']
-                                                                .toStringAsFixed(
-                                                                    2) +
-                                                            '%',
-                                                        style: TextStyle(
-                                                            color: datas[index][
-                                                                        'price_change_percentage_24h'] >
-                                                                    0
-                                                                ? Colors.green
-                                                                : Colors
-                                                                    .redAccent),
-                                                      )),
-                                                ),
                                                 Container(
-                                                  margin: EdgeInsets.only(
-                                                      right: 15, top: 5),
-                                                  child: datas[index][
-                                                              'price_change_percentage_24h'] >
-                                                          0
-                                                      ? Icon(AntDesign.caretup,
-                                                          size: 10,
-                                                          color: Colors.green)
-                                                      : Icon(
-                                                          AntDesign.caretdown,
-                                                          size: 10,
-                                                          color:
-                                                              Colors.redAccent),
+                                                    margin: EdgeInsets.only(
+                                                        top: 20, left: 5),
+                                                    child: Text(
+                                                      datas[index]['name'] +
+                                                          ' (' +
+                                                          datas[index]['symbol']
+                                                              .toString()
+                                                              .toUpperCase() +
+                                                          ')',
+                                                      style: TextStyle(
+                                                          fontSize: 16),
+                                                    )),
+                                                Container(
+                                                    margin: EdgeInsets.only(
+                                                        top: 5, left: 5),
+                                                    child: Text(
+                                                      datas[index]['hodl']
+                                                          .toStringAsFixed(4),
+                                                      style: TextStyle(
+                                                          color: Colors.grey),
+                                                    ))
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: Container(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
+                                              children: [
+                                                Container(
+                                                    margin: EdgeInsets.only(
+                                                        top: 21, right: 15),
+                                                    child: Text(
+                                                      NumberFormat
+                                                              .simpleCurrency(
+                                                                  locale: 'th')
+                                                          .format(datas[index]
+                                                              ['ownedValue']),
+                                                    )),
+                                                Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: Container(
+                                                          alignment: Alignment
+                                                              .centerRight,
+                                                          margin:
+                                                              EdgeInsets.only(
+                                                                  top: 5),
+                                                          child: Text(
+                                                            datas[index][
+                                                                        'price_change_percentage_24h']
+                                                                    .toStringAsFixed(
+                                                                        2) +
+                                                                '%',
+                                                            style: TextStyle(
+                                                                color: datas[index]
+                                                                            [
+                                                                            'price_change_percentage_24h'] >
+                                                                        0
+                                                                    ? Colors
+                                                                        .green
+                                                                    : Colors
+                                                                        .redAccent),
+                                                          )),
+                                                    ),
+                                                    Container(
+                                                      margin: EdgeInsets.only(
+                                                          right: 15, top: 5),
+                                                      child: datas[index][
+                                                                  'price_change_percentage_24h'] >
+                                                              0
+                                                          ? Icon(
+                                                              AntDesign.caretup,
+                                                              size: 10,
+                                                              color:
+                                                                  Colors.green)
+                                                          : Icon(
+                                                              AntDesign
+                                                                  .caretdown,
+                                                              size: 10,
+                                                              color: Colors
+                                                                  .redAccent),
+                                                    )
+                                                  ],
                                                 )
                                               ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                )),
-                          ));
-                        }
-                      },
-                    ),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    )),
+                              ));
+                            },
+                          ),
                   ),
                 )
               ],

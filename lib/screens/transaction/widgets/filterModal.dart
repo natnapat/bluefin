@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:bluefin/providers/cashTransactionProvider.dart';
 import 'package:provider/provider.dart';
-import 'package:intl/intl.dart';
 
 class FilterModal extends StatefulWidget {
   final int transIndex;

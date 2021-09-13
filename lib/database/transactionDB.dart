@@ -185,13 +185,20 @@ class TransactionDB {
       double? cashAmount) async {
     Database db = await initDB();
     if (transactionType == 0) {
-      List<Map<String, Object?>> datas = await db.rawQuery(
-          'SELECT MAX(planID) FROM reserve WHERE reservedType = ?', [category]);
-      int planID = int.parse(datas[0]['MAX(planID)'].toString());
-      await db.rawUpdate(
-          'UPDATE reserve SET actualAmount = actualAmount + ? WHERE planID = ? AND reservedType = ?',
-          [cashAmount, planID, category]);
+      if (category != "Income") {
+        print(category);
+        List<Map<String, Object?>> datas = await db.rawQuery(
+            'SELECT MAX(planID) FROM reserve WHERE reservedType = ?',
+            [category]);
+        int planID = int.parse(datas[0]['MAX(planID)'].toString());
+        await db.rawUpdate(
+            'UPDATE reserve SET actualAmount = actualAmount + ? WHERE planID = ? AND reservedType = ?',
+            [cashAmount, planID, category]);
+      }
+
+      print(id);
       await db.delete("cashTransaction", where: "id=?", whereArgs: [id]);
+
       print("delete cash transaction at index $id");
     } else if (transactionType == 1) {
       List<Map<String, Object?>> datas = await db.rawQuery(

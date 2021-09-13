@@ -5,6 +5,7 @@ import 'package:bluefin/providers/walletProvider.dart';
 
 import 'package:bluefin/screens/market/MarketScreen.dart';
 import 'package:bluefin/screens/planning/PlanningScreen.dart';
+import 'package:bluefin/screens/planning/calendarScreen.dart';
 import 'package:bluefin/screens/transaction/TransactionScreen.dart';
 import 'package:bluefin/screens/wallet/WalletScreen.dart';
 import 'package:flutter/material.dart';
@@ -70,7 +71,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
       case 3:
         return WalletScreen();
       case 4:
-        return PlanningScreen();
+        return CalendarScreen();
       default:
         return Center(
           child: Text('No Page Found'),

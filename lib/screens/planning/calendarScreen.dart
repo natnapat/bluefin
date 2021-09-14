@@ -287,6 +287,49 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   ),
                 ),
               ),
+              Container(
+                margin: EdgeInsets.only(top: 0),
+                child: Card(
+                  child: SizedBox(
+                    width: 360,
+                    height: 420,
+                    child: Container(
+                      child: ListView.builder(
+                        itemCount: provider.reserved.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            leading: IconButton(
+                                padding: EdgeInsets.zero,
+                                constraints: BoxConstraints(),
+                                onPressed: () {},
+                                icon: Icon(
+                                  AntDesign.checkcircle,
+                                  color:
+                                      provider.reserved[index]['checked'] == 1
+                                          ? Colors.green
+                                          : Colors.grey,
+                                  size: 20,
+                                )),
+                            title: Text(
+                              provider.reserved[index]['reservedType']
+                                  .toString(),
+                              style: TextStyle(fontSize: 14),
+                            ),
+                            trailing: Text(NumberFormat.simpleCurrency(
+                                        locale: 'th')
+                                    .format(provider.reserved[index]
+                                        ['actualAmount']) +
+                                ' / ' +
+                                NumberFormat.simpleCurrency(locale: 'th')
+                                    .format(provider.reserved[index]
+                                        ['reservedAmount'])),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              )
             ],
           ),
         );

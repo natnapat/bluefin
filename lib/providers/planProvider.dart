@@ -32,6 +32,7 @@ class PlanProvider with ChangeNotifier {
     PlanDB db = PlanDB();
     reserved = await db.getReserveMonthly(monthlyPlanID);
     print(reserved);
+    notifyListeners();
   }
 
   //add new plan

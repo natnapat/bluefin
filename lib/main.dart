@@ -1,7 +1,9 @@
 import 'package:bluefin/providers/cashTransactionProvider.dart';
+import 'package:bluefin/providers/marketProvider.dart';
 import 'package:bluefin/providers/planProvider.dart';
 import 'package:bluefin/providers/tradeTransactionProvider.dart';
 import 'package:bluefin/providers/walletProvider.dart';
+import 'package:bluefin/providers/chartProvider.dart';
 
 import 'package:bluefin/screens/market/MarketScreen.dart';
 import 'package:bluefin/screens/planning/PlanningScreen.dart';
@@ -33,6 +35,12 @@ class MyApp extends StatelessWidget {
           }),
           ChangeNotifierProvider(create: (context) {
             return WalletProvider();
+          }),
+          ChangeNotifierProvider(create: (context) {
+            return MarketProvider();
+          }),
+          ChangeNotifierProvider(create: (context) {
+            return ChartProvider();
           })
         ],
         child: MaterialApp(
@@ -63,14 +71,12 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   pageSelect() {
     switch (this._selectedPage) {
       case 0:
-        return Text("hello");
-      case 1:
         return MarketScreen();
-      case 2:
+      case 1:
         return TransactionScreen();
-      case 3:
+      case 2:
         return WalletScreen();
-      case 4:
+      case 3:
         return CalendarScreen();
       default:
         return Center(
@@ -89,10 +95,6 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
           backgroundColor: Colors.white,
           type: BottomNavigationBarType.fixed,
           items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(MaterialCommunityIcons.home_outline),
-              label: 'Overview',
-            ),
             BottomNavigationBarItem(
               icon: Icon(MaterialCommunityIcons.chart_line),
               label: 'Markets',

@@ -9,7 +9,7 @@ class CashTransactionProvider with ChangeNotifier {
     return cashTrans;
   }
 
-  void initData() async {
+  void getAllCashTransaction() async {
     var db = TransactionDB();
     cashTrans = await db.getCashTransaction(0, "", "", "");
     notifyListeners();
@@ -31,13 +31,10 @@ class CashTransactionProvider with ChangeNotifier {
   }
 
   //delete a transaction in database
-  void deleteCashTransaction(
-      int? id, int type, String? category, double? cashAmount) async {
+  void deleteCashTransaction(CashTransactionModel cashTransaction) async {
     var db = TransactionDB();
-
-    await db.deleteTransaction(id, type, category, cashAmount);
+    await db.deleteCashTransaction(cashTransaction);
     cashTrans = await db.getCashTransaction(0, "", "", "");
-
     notifyListeners();
   }
 }

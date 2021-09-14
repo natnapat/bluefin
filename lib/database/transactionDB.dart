@@ -2,6 +2,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:bluefin/models/cashTransactionModel.dart';
 import 'package:bluefin/models/tradeTransactionModel.dart';
+import 'package:bluefin/database/planDB.dart';
 
 class TransactionDB {
   Future<Database> initDB() async {
@@ -14,16 +15,16 @@ class TransactionDB {
       int type, String? category, String? startDate, String? endDate) async {
     Database db = await initDB();
     List<Map<String, Object?>> datas = [];
-
-    print(type);
-    print(category);
-    print(startDate);
-
+    //print(type);
+    //print(category);
+    //print(startDate);
     if (type == 0) {
       if (category == "") {
         if (startDate == "") {
           //print("hello null");
-          datas = await db.query("cashTransaction");
+          datas = await db.rawQuery(
+            'SELECT * FROM cashTransaction ORDER BY timestamp DESC',
+          );
         } else {
           datas = await db.rawQuery(
               'SELECT * FROM cashTransaction WHERE timestamp BETWEEN ? and ?',
@@ -72,11 +73,9 @@ class TransactionDB {
       int type, String? asset, String? startDate, String? endDate) async {
     Database db = await initDB();
     List<Map<String, Object?>> datas = [];
-
-    print(type);
-    print(asset);
-    print(startDate);
-
+    //print(type);
+    //print(asset);
+    //print(startDate);
     if (type == 0) {
       if (asset == "") {
         if (startDate == "") {
@@ -132,29 +131,57 @@ class TransactionDB {
       CashTransactionModel cashTransaction) async {
     Database db = await initDB();
 
-    await db.insert("cashTransaction", cashTransaction.toMap());
     if (cashTransaction.amount < 0) {
-      List<Map<String, Object?>> plan = await db
-          .rawQuery('SELECT planID FROM plan ORDER BY planID DESC LIMIT 1');
-
       print(cashTransaction.amount);
-      print(plan[0]['planID'].toString());
-      int planID = int.parse(plan[0]['planID'].toString());
       await db.rawUpdate(
-          'UPDATE reserve SET actualAmount = actualAmount + ? WHERE planID = ? AND reservedType = ?',
-          [cashTransaction.amount * -1, planID, cashTransaction.category]);
+          'UPDATE monthlyPlan SET actualExpense = actualExpense - ? WHERE monthlyPlanID = ?',
+          [cashTransaction.amount, cashTransaction.monthlyPlanID]);
 
-      List<Map<String, Object?>> reserved = await db.rawQuery(
-          'SELECT * FROM reserve WHERE planID = ? AND reservedType = ?',
-          [planID, cashTransaction.category]);
-
-      if (double.parse(reserved[0]['actualAmount'].toString()) >=
-          double.parse(reserved[0]['reservedAmount'].toString())) {
+      List<Map<String, Object?>> reserved = [];
+      reserved = await db.rawQuery(
+          'SELECT * FROM reserve WHERE monthlyPlanID = ? AND reservedType = ?',
+          [cashTransaction.monthlyPlanID, cashTransaction.category]);
+      if (reserved.isNotEmpty) {
         await db.rawUpdate(
-            'UPDATE reserve SET checked = 1 WHERE planID = ? AND reservedType = ?',
-            [planID, cashTransaction.category]);
+            'UPDATE reserve SET actualAmount = actualAmount - ? WHERE monthlyPlanID = ? AND reservedType = ?',
+            [
+              cashTransaction.amount,
+              cashTransaction.monthlyPlanID,
+              cashTransaction.category
+            ]);
+        reserved = await db.rawQuery(
+            'SELECT * FROM reserve WHERE monthlyPlanID = ? AND reservedType = ?',
+            [cashTransaction.monthlyPlanID, cashTransaction.category]);
+        if (double.parse(reserved[0]['actualAmount'].toString()) >=
+            double.parse(reserved[0]['reservedAmount'].toString())) {
+          await db.rawUpdate(
+              'UPDATE reserve SET checked = 1 WHERE monthlyPlanID = ? AND reservedType = ?',
+              [cashTransaction.monthlyPlanID, cashTransaction.category]);
+        }
+      } else {
+        List<Map<String, Object?>> getPlanID = [];
+        getPlanID = await db.rawQuery(
+            "SELECT * from monthlyPlan WHERE monthlyPlanID = ?",
+            [cashTransaction.monthlyPlanID]);
+        int planID = int.parse(getPlanID[0]['PlanID'].toString());
+        await db.rawInsert(
+            'INSERT INTO reserve(planID,reservedType,reservedAmount,actualAmount,checked,monthlyPlanID) VALUES(?,?,?,?,?,?)',
+            [
+              planID,
+              cashTransaction.category,
+              cashTransaction.amount * -1,
+              cashTransaction.amount * -1,
+              0,
+              cashTransaction.monthlyPlanID
+            ]);
       }
+    } else {
+      print(cashTransaction.amount);
+      await db.rawUpdate(
+          'UPDATE monthlyPlan SET actualIncome = actualIncome + ? WHERE monthlyPlanID = ?',
+          [cashTransaction.amount, cashTransaction.monthlyPlanID]);
     }
+    await db.insert("cashTransaction", cashTransaction.toMap());
   }
 
   Future<void> insertTradeTransaction(
@@ -181,36 +208,51 @@ class TransactionDB {
     }
   }
 
-  Future<void> deleteTransaction(int? id, int transactionType, String? category,
-      double? cashAmount) async {
+  Future<void> deleteCashTransaction(
+      CashTransactionModel cashTransaction) async {
     Database db = await initDB();
-    if (transactionType == 0) {
-      if (category != "Income") {
-        print(category);
-        List<Map<String, Object?>> datas = await db.rawQuery(
-            'SELECT MAX(planID) FROM reserve WHERE reservedType = ?',
-            [category]);
-        int planID = int.parse(datas[0]['MAX(planID)'].toString());
+    if (cashTransaction.amount < 0) {
+      await db.rawUpdate(
+          'UPDATE monthlyPlan SET actualExpense = actualExpense + ? WHERE monthlyPlanID = ?',
+          [cashTransaction.amount, cashTransaction.monthlyPlanID]);
+
+      await db.rawUpdate(
+          'UPDATE reserve SET actualAmount = actualAmount + ? WHERE monthlyPlanID = ? AND reservedType = ?',
+          [
+            cashTransaction.amount,
+            cashTransaction.monthlyPlanID,
+            cashTransaction.category
+          ]);
+
+      List<Map<String, Object?>> reserved = await db.rawQuery(
+          'SELECT * FROM reserve WHERE monthlyPlanID = ? AND reservedType = ?',
+          [cashTransaction.monthlyPlanID, cashTransaction.category]);
+      if (double.parse(reserved[0]['actualAmount'].toString()) <
+          double.parse(reserved[0]['reservedAmount'].toString())) {
         await db.rawUpdate(
-            'UPDATE reserve SET actualAmount = actualAmount + ? WHERE planID = ? AND reservedType = ?',
-            [cashAmount, planID, category]);
+            'UPDATE reserve SET checked = 0 WHERE monthlyPlanID = ? AND reservedType = ?',
+            [cashTransaction.monthlyPlanID, cashTransaction.category]);
       }
-
-      print(id);
-      await db.delete("cashTransaction", where: "id=?", whereArgs: [id]);
-
-      print("delete cash transaction at index $id");
-    } else if (transactionType == 1) {
-      List<Map<String, Object?>> datas = await db.rawQuery(
-          'SELECT LOWER(tradeTitle),tradeAmount FROM tradeTransaction WHERE tradeID = ?',
-          [id]);
-
-      print(datas);
-      await db.rawUpdate('UPDATE asset SET hodl = hodl - ? WHERE symbol = ?',
-          [datas[0]['tradeAmount'], datas[0]['LOWER(tradeTitle)']]);
-
-      await db.delete("tradeTransaction", where: "tradeID=?", whereArgs: [id]);
-      print("delete trade transaction at index $id");
+    } else {
+      await db.rawUpdate(
+          'UPDATE monthlyPlan SET actualIncome = actualIncome - ? WHERE monthlyPlanID = ?',
+          [cashTransaction.amount, cashTransaction.monthlyPlanID]);
     }
+    await db.delete("cashTransaction",
+        where: "id=?", whereArgs: [cashTransaction.id]);
+  }
+
+  Future<void> deleteTradeTransaction(int? id) async {
+    Database db = await initDB();
+    List<Map<String, Object?>> datas = await db.rawQuery(
+        'SELECT LOWER(tradeTitle),tradeAmount FROM tradeTransaction WHERE tradeID = ?',
+        [id]);
+
+    //print(datas);
+    await db.rawUpdate('UPDATE asset SET hodl = hodl - ? WHERE symbol = ?',
+        [datas[0]['tradeAmount'], datas[0]['LOWER(tradeTitle)']]);
+
+    await db.delete("tradeTransaction", where: "tradeID=?", whereArgs: [id]);
+    print("delete trade transaction at index $id");
   }
 }

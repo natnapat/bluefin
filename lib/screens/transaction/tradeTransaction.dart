@@ -42,7 +42,6 @@ class _TradeTransactionState extends State<TradeTransaction> {
                         listen: false);
                     provider.deleteTradeTransaction(
                       data.tradeID,
-                      1,
                     );
                   },
                   direction: DismissDirection.endToStart,

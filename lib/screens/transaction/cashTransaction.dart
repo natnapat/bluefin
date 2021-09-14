@@ -16,7 +16,8 @@ class _CashTransactionState extends State<CashTransaction> {
   @override
   void initState() {
     super.initState();
-    Provider.of<CashTransactionProvider>(context, listen: false).initData();
+    Provider.of<CashTransactionProvider>(context, listen: false)
+        .getAllCashTransaction();
   }
 
   @override
@@ -26,7 +27,7 @@ class _CashTransactionState extends State<CashTransaction> {
         int count = provider.cashTrans.length;
         if (count <= 0) {
           return Center(
-            child: Text("No Transaction, Add a plan first !"),
+            child: Text("No Transaction"),
           );
         } else {
           return ListView.builder(
@@ -38,8 +39,7 @@ class _CashTransactionState extends State<CashTransaction> {
                   onDismissed: (direction) {
                     var provider = Provider.of<CashTransactionProvider>(context,
                         listen: false);
-                    provider.deleteCashTransaction(
-                        data.id, 0, data.category, data.amount);
+                    provider.deleteCashTransaction(data);
                   },
                   direction: DismissDirection.endToStart,
                   background: Container(

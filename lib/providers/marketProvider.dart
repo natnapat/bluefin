@@ -25,9 +25,9 @@ class MarketProvider with ChangeNotifier {
 
     //get support assets list
     var response = await http.get(Uri.parse(
-        'https://6ctfptnaf3.execute-api.ap-southeast-1.amazonaws.com/crypto?cryptoID=true'));
+        'https://ggm079kc2d.execute-api.ap-southeast-1.amazonaws.com/crypto'));
     supportAssetList = jsonDecode(response.body);
-    print(supportAssetList);
+    //print(supportAssetList);
 
     //get crypto data
     String url =
@@ -38,7 +38,7 @@ class MarketProvider with ChangeNotifier {
     url += '&order=market_cap_desc&per_page=100&page=1&sparkline=false';
     response = await http.get(Uri.parse(url));
     cryptoDatas = jsonDecode(response.body);
-    print(cryptoDatas);
+    //print(cryptoDatas);
 
     notifyListeners();
   }

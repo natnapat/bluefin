@@ -16,10 +16,10 @@ class WalletProvider with ChangeNotifier {
     WalletDB db = WalletDB();
     List<Map<String, Object?>> assets = [];
     assets = await db.getMyAssets();
-    print(assets);
+    //print(assets);
     if (assets.isNotEmpty) {
       var response = await http.get(Uri.parse(
-          'https://6ctfptnaf3.execute-api.ap-southeast-1.amazonaws.com/crypto?cryptoID=true'));
+          'https://ggm079kc2d.execute-api.ap-southeast-1.amazonaws.com/crypto'));
       final cryptoID = jsonDecode(response.body);
 
       List idsToFetch = [];
@@ -55,8 +55,8 @@ class WalletProvider with ChangeNotifier {
             //print(assets[j]['symbol']);
             myCryptoDatas[i]['hodl'] = assets[j]['hodl'];
             myCryptoDatas[i]['ownedValue'] =
-                myCryptoDatas[i]['current_price'] * assets[j]['hodl'];
-
+                myCryptoDatas[i]['current_price'].toDouble() *
+                    assets[j]['hodl'];
             equityValueYesterday += (myCryptoDatas[i]['current_price'] -
                     myCryptoDatas[i]['price_change_24h']) *
                 assets[j]['hodl'];
@@ -66,10 +66,10 @@ class WalletProvider with ChangeNotifier {
         }
         equityValue += myCryptoDatas[i]['ownedValue'];
       }
-      print(equityValue);
-      print(equityValueYesterday);
+      //print(equityValue);
+      //print(equityValueYesterday);
       pnlYesterday = (equityValue - equityValueYesterday) / equityValue * 100;
-      print(cashBalance);
+      //print(cashBalance);
       notifyListeners();
     } else {
       print("assets empty");

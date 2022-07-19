@@ -7,20 +7,24 @@ class AssetSearch extends SearchDelegate<String> {
 
   Future<List> fetchAsset() async {
     var response1 = await http.get(Uri.parse(
-        'https://6ctfptnaf3.execute-api.ap-southeast-1.amazonaws.com/crypto?cryptoID=false'));
+        'https://ggm079kc2d.execute-api.ap-southeast-1.amazonaws.com/crypto'));
     if (response1.statusCode != 200) {
       throw Exception('Failed to load');
     }
 
-    var response2 = await http.get(Uri.parse(
-        'https://6ctfptnaf3.execute-api.ap-southeast-1.amazonaws.com/set50'));
-    if (response2.statusCode != 200) {
-      throw Exception('Failed to load');
-    }
+    // var response2 = await http.get(Uri.parse(
+    //     'https://6ctfptnaf3.execute-api.ap-southeast-1.amazonaws.com/set50'));
+    // if (response2.statusCode != 200) {
+    //   throw Exception('Failed to load');
+    // }
     var assets = jsonDecode(response1.body);
-    assets += jsonDecode(response2.body);
-    //print(assets);
-    return assets;
+    // assets += jsonDecode(response2.body);
+    // print(assets);
+    var assetID = [];
+    for (int i = 0; i < assets.length; i++) {
+      assetID.add(assets[i]["symbol"]);
+    }
+    return assetID;
   }
 
   @override

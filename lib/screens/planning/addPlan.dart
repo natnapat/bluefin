@@ -219,7 +219,7 @@ class _AddPlanState extends State<AddPlan> {
                       ),
                     ),
                     Container(
-                      width: 80,
+                      width: 60,
                       height: 20,
                       margin: EdgeInsets.only(left: 10, top: 10),
                       child: TextFormField(

@@ -21,9 +21,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
   void initState() {
     super.initState();
     Provider.of<PlanProvider>(context, listen: false).initData();
-    activeMonth = Provider.of<PlanProvider>(context, listen: false)
-        .monthlyPlans[0]
-        .monthlyPlanID;
+    if (Provider.of<PlanProvider>(context, listen: false)
+        .monthlyPlans
+        .isNotEmpty) {
+      activeMonth = Provider.of<PlanProvider>(context, listen: false)
+          .monthlyPlans[0]
+          .monthlyPlanID;
+    }
   }
 
   @override
@@ -35,12 +39,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   Widget getBody() {
     var size = MediaQuery.of(context).size;
-
     return Consumer(builder: (context, PlanProvider provider, Widget? child) {
-      //print(provider.plan);
       if (provider.monthlyPlans.isEmpty) {
         return AddPlan();
       } else {
+        // activeMonth = Provider.of<PlanProvider>(context, listen: false)
+        //     .monthlyPlans[0]
+        //     .monthlyPlanID;
         return SingleChildScrollView(
           child: Column(
             children: [
@@ -101,8 +106,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                             listen: false)
                                         .getReserveMonthly(activeMonth);
                                   });
-                                  print(provider.reserved);
-                                  print(activeMonth);
+                                  //print(provider.reserved);
+                                  //print(activeMonth);
                                 },
                                 child: Container(
                                   width: (size.width - 40) / 7,

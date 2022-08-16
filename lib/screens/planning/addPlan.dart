@@ -209,7 +209,7 @@ class _AddPlanState extends State<AddPlan> {
                           final result = await showSearch(
                               context: context, delegate: CategorySearch());
                           reservedType.text = result!;
-                          print(reservedType.text);
+                          //print(reservedType.text);
                         },
                         showCursor: false,
                         readOnly: true,
@@ -274,7 +274,7 @@ class _AddPlanState extends State<AddPlan> {
                 ),
                 Container(
                   width: MediaQuery.of(context).size.width - 60,
-                  height: 400,
+                  height: 365,
                   margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
                   decoration: BoxDecoration(
                       color: Colors.white,
@@ -347,8 +347,8 @@ class _AddPlanState extends State<AddPlan> {
                           for (int i = 0; i < rules.length; i++) {
                             expense += rules[i]['amount'];
                           }
-                          print("income = ${incomeAmount.text}");
-                          print("expense = ${expense}");
+                          //print("income = ${incomeAmount.text}");
+                          //print("expense = ${expense}");
                           if (expense > double.parse(incomeAmount.text)) {
                             showDialog<String>(
                                 context: context,
@@ -399,11 +399,12 @@ class _AddPlanState extends State<AddPlan> {
                                 double.parse(incomeAmount.text),
                                 rules,
                                 deadLine.text);
-                            print("insert plan");
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return CalendarScreen();
-                            }));
+                            //print("insert plan");
+                            // Navigator.push(context,
+                            //     MaterialPageRoute(builder: (context) {
+                            //   return CalendarScreen();
+                            // }));
+                            Navigator.pop(context);
                           }
                         }
                       },

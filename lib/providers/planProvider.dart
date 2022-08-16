@@ -16,11 +16,11 @@ class PlanProvider with ChangeNotifier {
     PlanDB db = PlanDB();
     monthlyPlans = await db.getAllMonthlyPlan();
     if (monthlyPlans.isNotEmpty) {
-      print(monthlyPlans);
+      //print(monthlyPlans);
       int planID = int.parse(monthlyPlans[0].monthlyPlanID.toString());
       //print(planID);
       reserved = await db.getReserveMonthly(planID);
-      print(reserved);
+      //print(reserved);
       // expense = await db.getExpense(
       //     monthlyPlans[0].startDate, monthlyPlans[0].startDate);
       // print(expense);
@@ -31,7 +31,7 @@ class PlanProvider with ChangeNotifier {
   void getReserveMonthly(int? monthlyPlanID) async {
     PlanDB db = PlanDB();
     reserved = await db.getReserveMonthly(monthlyPlanID);
-    print(reserved);
+    //print(reserved);
     notifyListeners();
   }
 

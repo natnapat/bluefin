@@ -8,7 +8,7 @@ class ChartProvider with ChangeNotifier {
   List<ChartData> chartData = [];
   var myCryptoDatas = [];
 
-  void getOHLC(String assetID, int activePeriod) async {
+  Future<void> getOHLC(String assetID, int activePeriod) async {
     chartData = [];
     OHLC = [];
     String _apiURL = "https://api.coingecko.com/api/v3/coins/" +
@@ -35,8 +35,8 @@ class ChartProvider with ChangeNotifier {
     response = await http.get(Uri.parse(_apiURL));
     myCryptoDatas = jsonDecode(response.body);
 
-    print(activePeriod.toString());
-    //print(myCryptoDatas[0]['name']);
+    //print(activePeriod.toString());
+    //print(myCryptoDatas);
     notifyListeners();
   }
 }
